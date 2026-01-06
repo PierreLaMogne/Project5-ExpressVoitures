@@ -1,4 +1,4 @@
-﻿@model Voiture
+﻿@model VoitureViewModel
 @using Net_P5.Data
 @inject ApplicationDbContext DbContext
 @using Microsoft.EntityFrameworkCore
@@ -16,7 +16,7 @@
                 <span class="soustitre">tous les champs sont obligatoires</span>
             </div>
             <form asp-controller="Home" asp-action="Create" method="post" enctype="multipart/form-data">
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
                 <div class="mb-3">
                     <label asp-for="CodeVIN" class="form-label">Code VIN du véhicule</label>
                     <input asp-for="CodeVIN" class="form-control border-dark">
@@ -87,3 +87,31 @@
         </div>
     </div>
 </div>
+
+<!--Affichage de la photo uploadée-->
+@section Scripts {
+    <script>
+        document.getElementById('photoInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    // Créer ou mettre à jour l'aperçu
+                    let preview = document.getElementById('photoPreview');
+                    if (!preview) {
+                        preview = document.createElement('img');
+                        preview.id = 'photoPreview';
+                        preview.className = 'img-fluid rounded mt-3';
+                        preview.style.maxHeight = '200px';
+                        document.querySelector('.file-upload-wrapper').parentElement.appendChild(preview);
+                    }
+                    preview.src = event.target.result;
+                    
+                    // Mettre à jour le texte du label
+                    document.querySelector('.file-upload-wrapper label span:last-child').textContent = file.name;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+}

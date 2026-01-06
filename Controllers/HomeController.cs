@@ -45,47 +45,90 @@ namespace Net_P5.Controllers
         public async Task<IActionResult> Create()
         {
             await PopulateDropdowns();
-            return View();
+            return View(new VoitureViewModel());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Voiture voiture)
+        public async Task<IActionResult> Create(VoitureViewModel model, IFormFile? Photo)
         {
+            //Vérification du format des données
             if (!ModelState.IsValid)
             {
                 await PopulateDropdowns();
-                return View(voiture);
+                return View(model);
             }
 
-            if (await _context.Voitures.AnyAsync(v => v.MarqueId != voiture.Modele.MarqueId))
+            //Vérification d'un doublon en base
+            if (await _context.Voitures.AnyAsync(v => v.CodeVIN == model.CodeVIN))
+            {
+                ModelState.AddModelError("CodeVIN", "Une voiture avec ce code VIN existe déjà.");
+                await PopulateDropdowns();
+                return View(model);
+            }
+
+            //Vérification du couple Marque-Modele
+            var modele = await _context.Modeles.FirstOrDefaultAsync(m => m.Id == model.ModeleId);
+            if (modele == null || modele.MarqueId != model.MarqueId)
             {
                 ModelState.AddModelError(string.Empty, "Le modèle choisi n'appartient pas à la marque sélectionnée");
                 await PopulateDropdowns();
-                return View(voiture);
+                return View(model);
             }
 
-            if (await _context.Voitures.AnyAsync(v => v.ModeleId != voiture.Finition.ModeleId))
+            //Vérification du couple Modele-Finition
+            var finition = await _context.Finitions.FirstOrDefaultAsync(f => f.Id == model.FinitionId);
+            if (finition == null || finition.ModeleId != model.ModeleId)
             {
                 ModelState.AddModelError(string.Empty, "La finition choisie n'appartient pas au modèle sélectionné");
                 await PopulateDropdowns();
-                return View(voiture);
+                return View(model);
             }
 
-            if (voiture.Photo != null && voiture.Photo.Length > 0)
+            // Vérification du fichier photo
+            if (model.Photo != null)
             {
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+                var extension = Path.GetExtension(model.Photo.FileName).ToLowerInvariant();
+
+                if (!allowedExtensions.Contains(extension))
+                {
+                    ModelState.AddModelError("Photo", "Format non autorisé. Utilisez JPG, PNG, GIF ou WebP.");
+                }
+
+                if (model.Photo.Length > 5 * 1024 * 1024) // 5 Mo
+                {
+                    ModelState.AddModelError("Photo", "La taille de l'image ne doit pas dépasser 5 Mo.");
+                }
+            }
+
+            //Création de la voiture
+            var voiture = new Voiture
+            {
+                CodeVIN = model.CodeVIN,
+                PrixVente = model.PrixVente,
+                Annee = model.Annee,
+                MarqueId = model.MarqueId,
+                ModeleId = model.ModeleId,
+                FinitionId = model.FinitionId
+            };
+
+            //Création de la photo
+            if (Photo != null && Photo.Length > 0)
+            {
+                voiture.Photo = Photo;
                 var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
                 Directory.CreateDirectory(uploadsFolder);
-                var uniqueFileName = Guid.NewGuid().ToString() + "_" + voiture.Photo.FileName;
-                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                var filePath = Path.Combine(uploadsFolder, Photo.FileName);
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
-                    await voiture.Photo.CopyToAsync(fileStream);
+                    await Photo.CopyToAsync(fileStream);
                 }
-                voiture.PhotoUrl = "/uploads/" + uniqueFileName;
+                voiture.PhotoUrl = "/uploads/" + Photo.FileName;
             }
 
-            _context.Add(voiture);
+            //Enregistrement des données et redirection
+            _context.Voitures.Add(voiture);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(CreateConfirmation));
         }
@@ -107,6 +150,7 @@ namespace Net_P5.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        //Remplissage des champs Select
         public async Task PopulateDropdowns()
         {
             ViewBag.Marques = await _context.Marques.ToListAsync();
