@@ -21,7 +21,7 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-//Create a scope for admin user creation
+//Create a scope for admin user creation and dataseeding
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -33,6 +33,13 @@ using (var scope = app.Services.CreateScope())
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
         logger.LogError(ex, "An error occurred while creating the admin user.");
+    }
+
+    if (app.Environment.IsDevelopment())
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        context.Database.Migrate();
+        DataSeeder.Seed(context);
     }
 }
 
