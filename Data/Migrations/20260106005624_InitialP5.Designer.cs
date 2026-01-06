@@ -12,7 +12,7 @@ using Net_P5.Data;
 namespace Net_P5.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260106000100_InitialP5")]
+    [Migration("20260106005624_InitialP5")]
     partial class InitialP5
     {
         /// <inheritdoc />
@@ -362,7 +362,16 @@ namespace Net_P5.Data.Migrations
                     b.Property<int>("FinitionId")
                         .HasColumnType("int");
 
+                    b.Property<string>("PhotoUrl")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
                     b.Property<decimal>("PrixAchat")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("decimal(12,2)");
+
+                    b.Property<decimal>("PrixVente")
                         .HasPrecision(12, 2)
                         .HasColumnType("decimal(12,2)");
 

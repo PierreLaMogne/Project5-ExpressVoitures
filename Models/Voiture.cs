@@ -29,6 +29,19 @@ namespace Net_P5.Models
         [Precision(12, 2)]
         public decimal PrixAchat { get; set; }
 
+        [Required(ErrorMessage = "Le prix de vente est obligatoire.")]
+        [Display(Name = "Prix de vente")]
+        [Precision(12, 2)]
+        public decimal PrixVente { get; set; }
+
+        [NotMapped]
+        [Display(Name = "Photo de la voiture")]
+        public IFormFile Photo { get; set; } = null!;
+
+        [MaxLength(255)]
+        [Display(Name = "Chemin de la photo")]
+        public string PhotoUrl { get; set; } = string.Empty;
+
         [Display(Name = "Est-ce que la boiture est en vente ?")]
         public bool EnVente { get; set; } = false;
 
@@ -42,8 +55,9 @@ namespace Net_P5.Models
         [NotMapped]
         public string Statut => EstVendue ? "Vendue" : EstEnReparation ? "En réparation" : EnVente ? "Disponible" : "Indisponible";
 
-        [NotMapped]
-        public decimal PrixVente => Reparations.Sum(r => r.Cout) + PrixAchat;
+        //Prix de vente calculé automatiquement
+        //[NotMapped]
+        //public decimal PrixVente => Reparations.Sum(r => r.Cout) + PrixAchat;
 
         [NotMapped]
         public string NomComplet => $"{Finition?.Modele?.Marque?.Nom} {Finition?.Modele?.Nom} {Finition?.Nom}";

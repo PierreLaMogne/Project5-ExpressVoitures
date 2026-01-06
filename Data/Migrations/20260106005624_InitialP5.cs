@@ -72,6 +72,8 @@ namespace Net_P5.Data.Migrations
                     Annee = table.Column<int>(type: "int", nullable: false),
                     DateAchat = table.Column<DateOnly>(type: "date", nullable: false),
                     PrixAchat = table.Column<decimal>(type: "decimal(12,2)", precision: 12, scale: 2, nullable: false),
+                    PrixVente = table.Column<decimal>(type: "decimal(12,2)", precision: 12, scale: 2, nullable: false),
+                    PhotoUrl = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     EnVente = table.Column<bool>(type: "bit", nullable: false),
                     FinitionId = table.Column<int>(type: "int", nullable: false)
                 },

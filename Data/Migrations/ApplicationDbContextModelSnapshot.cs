@@ -359,7 +359,16 @@ namespace Net_P5.Data.Migrations
                     b.Property<int>("FinitionId")
                         .HasColumnType("int");
 
+                    b.Property<string>("PhotoUrl")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
                     b.Property<decimal>("PrixAchat")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("decimal(12,2)");
+
+                    b.Property<decimal>("PrixVente")
                         .HasPrecision(12, 2)
                         .HasColumnType("decimal(12,2)");
 
