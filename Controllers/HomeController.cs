@@ -254,6 +254,50 @@ namespace Net_P5.Controllers
             return RedirectToAction(nameof(Details), new { id = voiture.CodeVIN});
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var voiture = await _context.Voitures
+                .Include(v => v.Finition.Modele.Marque)
+                .Include(v => v.Reparations)
+                .FirstOrDefaultAsync(v => v.CodeVIN == id);
+            if (voiture == null)
+            {
+                return NotFound();
+            }
+            return View(voiture);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(string id)
+        {
+            var voiture = await _context.Voitures
+                .Include(v => v.Finition.Modele.Marque)
+                .Include(v => v.Reparations)
+                .FirstOrDefaultAsync(v => v.CodeVIN == id);
+            if (voiture == null)
+            {
+                return NotFound();
+            }
+
+            // Suppression de la photo si elle existe
+            if (!string.IsNullOrEmpty(voiture.PhotoUrl))
+            {
+                var photoPath = Path.Combine(_env.WebRootPath, voiture.PhotoUrl.TrimStart('/'));
+                if (System.IO.File.Exists(photoPath))
+                {
+                    System.IO.File.Delete(photoPath);
+                }
+            }
+
+            ViewBag.NomSupprime = voiture.NomComplet;
+
+            _context.Voitures.Remove(voiture);
+            await _context.SaveChangesAsync();
+            return View("DeleteConfirmation");
+        }
 
         public IActionResult Privacy()
         {
