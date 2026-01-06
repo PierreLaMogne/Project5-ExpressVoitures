@@ -109,9 +109,9 @@ namespace Net_P5.Controllers
 
         public async Task PopulateDropdowns()
         {
-            ViewBag.Marques = new SelectList(await _context.Marques.ToListAsync(), "Id", "Nom");
-            ViewBag.Modeles = new SelectList(await _context.Modeles.ToListAsync(), "Id", "Nom");
-            ViewBag.Finitions = new SelectList(await _context.Finitions.ToListAsync(), "Id", "Nom");
+            ViewBag.Marques = await _context.Marques.ToListAsync();
+            ViewBag.Modeles = await _context.Modeles.ToListAsync();
+            ViewBag.Finitions = await _context.Finitions.ToListAsync();
         }
     }
 }
