@@ -54,6 +54,8 @@ namespace Net_P5.Controllers
             if (!ModelState.IsValid)
             {
                 await PopulateDropdowns();
+                // Amélioration WCAG : Ajouter un message global accessible
+                ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
                 return View(model);
             }
 
@@ -61,6 +63,7 @@ namespace Net_P5.Controllers
             if (await _context.Voitures.AnyAsync(v => v.CodeVIN == model.CodeVIN))
             {
                 ModelState.AddModelError("CodeVIN", "Une voiture avec ce code VIN existe déjà.");
+                ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
                 await PopulateDropdowns();
                 return View(model);
             }
@@ -69,7 +72,8 @@ namespace Net_P5.Controllers
             var modele = await _context.Modeles.FirstOrDefaultAsync(m => m.Id == model.ModeleId);
             if (modele == null || modele.MarqueId != model.MarqueId)
             {
-                ModelState.AddModelError(string.Empty, "Le modèle choisi n'appartient pas à la marque sélectionnée");
+                ModelState.AddModelError("ModeleId", "Le modèle choisi n'appartient pas à la marque sélectionnée");
+                ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
                 await PopulateDropdowns();
                 return View(model);
             }
@@ -78,7 +82,8 @@ namespace Net_P5.Controllers
             var finition = await _context.Finitions.FirstOrDefaultAsync(f => f.Id == model.FinitionId);
             if (finition == null || finition.ModeleId != model.ModeleId)
             {
-                ModelState.AddModelError(string.Empty, "La finition choisie n'appartient pas au modèle sélectionné");
+                ModelState.AddModelError("FinitionId", "La finition choisie n'appartient pas au modèle sélectionné");
+                ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
                 await PopulateDropdowns();
                 return View(model);
             }
@@ -92,11 +97,17 @@ namespace Net_P5.Controllers
                 if (!allowedExtensions.Contains(extension))
                 {
                     ModelState.AddModelError("Photo", "Format non autorisé. Utilisez JPG, PNG, GIF ou WebP.");
+                    ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
+                    await PopulateDropdowns();
+                    return View(model);
                 }
 
                 if (model.Photo.Length > 5 * 1024 * 1024) // 5 Mo
                 {
                     ModelState.AddModelError("Photo", "La taille de l'image ne doit pas dépasser 5 Mo.");
+                    ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
+                    await PopulateDropdowns();
+                    return View(model);
                 }
             }
 
@@ -117,17 +128,22 @@ namespace Net_P5.Controllers
                 voiture.Photo = Photo;
                 var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
                 Directory.CreateDirectory(uploadsFolder);
-                var filePath = Path.Combine(uploadsFolder, Photo.FileName);
+                var uniqueFileName = $"{Guid.NewGuid()}_{Path.GetFileName(Photo.FileName)}";
+                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
                     await Photo.CopyToAsync(fileStream);
                 }
-                voiture.PhotoUrl = "/uploads/" + Photo.FileName;
+                voiture.PhotoUrl = "/uploads/" + uniqueFileName;
             }
 
             //Enregistrement des données et redirection
             _context.Voitures.Add(voiture);
             await _context.SaveChangesAsync();
+            
+            // Amélioration WCAG : Message de succès pour les lecteurs d'écran
+            TempData["SuccessMessage"] = "La voiture a été créée avec succès.";
+            
             return RedirectToAction(nameof(CreateConfirmation));
         }
 
@@ -169,6 +185,7 @@ namespace Net_P5.Controllers
             //Vérification du format des données
             if (!ModelState.IsValid)
             {
+                ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
                 await PopulateDropdowns();
                 return View(model);
             }
@@ -184,7 +201,8 @@ namespace Net_P5.Controllers
             var modele = await _context.Modeles.FirstOrDefaultAsync(m => m.Id == model.ModeleId);
             if (modele == null || modele.MarqueId != model.MarqueId)
             {
-                ModelState.AddModelError(string.Empty, "Le modèle choisi n'appartient pas à la marque sélectionnée");
+                ModelState.AddModelError("ModeleId", "Le modèle choisi n'appartient pas à la marque sélectionnée");
+                ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
                 await PopulateDropdowns();
                 return View(model);
             }
@@ -193,7 +211,8 @@ namespace Net_P5.Controllers
             var finition = await _context.Finitions.FirstOrDefaultAsync(f => f.Id == model.FinitionId);
             if (finition == null || finition.ModeleId != model.ModeleId)
             {
-                ModelState.AddModelError(string.Empty, "La finition choisie n'appartient pas au modèle sélectionné");
+                ModelState.AddModelError("FinitionId", "La finition choisie n'appartient pas au modèle sélectionné");
+                ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
                 await PopulateDropdowns();
                 return View(model);
             }
@@ -207,6 +226,7 @@ namespace Net_P5.Controllers
                 if (!allowedExtensions.Contains(extension))
                 {
                     ModelState.AddModelError("Photo", "Format non autorisé. Utilisez JPG, PNG, GIF ou WebP.");
+                    ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
                     await PopulateDropdowns();
                     return View(model);
                 }
@@ -214,6 +234,7 @@ namespace Net_P5.Controllers
                 if (Photo.Length > 5 * 1024 * 1024) // 5 Mo
                 {
                     ModelState.AddModelError("Photo", "La taille de l'image ne doit pas dépasser 5 Mo.");
+                    ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
                     await PopulateDropdowns();
                     return View(model);
                 }
@@ -231,7 +252,7 @@ namespace Net_P5.Controllers
                 // Sauvegarde de la nouvelle photo
                 var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
                 Directory.CreateDirectory(uploadsFolder);
-                var uniqueFileName = $"{Guid.NewGuid()}_{Photo.FileName}";
+                var uniqueFileName = $"{Guid.NewGuid()}_{Path.GetFileName(Photo.FileName)}";
                 var filePath = Path.Combine(uploadsFolder, uniqueFileName);
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
@@ -241,7 +262,6 @@ namespace Net_P5.Controllers
             }
 
             //Mise à jour des propriétés de la voiture
-            voiture.CodeVIN = model.CodeVIN;
             voiture.PrixVente = model.PrixVente;
             voiture.Annee = model.Annee;
             voiture.MarqueId = model.MarqueId;
@@ -251,7 +271,17 @@ namespace Net_P5.Controllers
             //Enregistrement des modifications et redirection
             _context.Voitures.Update(voiture);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Details), new { id = voiture.CodeVIN});
+
+            // Recharger complètement l'entité avec ses nouvelles propriétés de navigation
+            var voitureReloaded = await _context.Voitures
+                .Include(v => v.Marque)
+                .Include(v => v.Modele)
+                .Include(v => v.Finition)
+                .FirstOrDefaultAsync(v => v.CodeVIN == model.CodeVIN);
+
+            ViewBag.NomModifie = $@"{voitureReloaded!.Marque.Nom} {voitureReloaded.Modele.Nom} {voitureReloaded.Finition.Nom}";
+
+            return View("EditConfirmation");
         }
 
         [HttpGet]
@@ -259,7 +289,6 @@ namespace Net_P5.Controllers
         {
             var voiture = await _context.Voitures
                 .Include(v => v.Finition.Modele.Marque)
-                .Include(v => v.Reparations)
                 .FirstOrDefaultAsync(v => v.CodeVIN == id);
             if (voiture == null)
             {
@@ -275,7 +304,6 @@ namespace Net_P5.Controllers
         {
             var voiture = await _context.Voitures
                 .Include(v => v.Finition.Modele.Marque)
-                .Include(v => v.Reparations)
                 .FirstOrDefaultAsync(v => v.CodeVIN == id);
             if (voiture == null)
             {
@@ -293,7 +321,7 @@ namespace Net_P5.Controllers
             }
 
             ViewBag.NomSupprime = voiture.NomComplet;
-
+            
             _context.Voitures.Remove(voiture);
             await _context.SaveChangesAsync();
             return View("DeleteConfirmation");

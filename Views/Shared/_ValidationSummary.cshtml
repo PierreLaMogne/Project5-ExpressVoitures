@@ -1,0 +1,19 @@
+﻿@if (ViewBag.ErrorSummary != null || !ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger" role="alert" aria-live="polite" tabindex="-1" id="error-summary">
+        <h2 class="h5">
+            <span aria-hidden="true">⚠️</span>
+            Erreur de validation
+        </h2>
+        <p>@(ViewBag.ErrorSummary ?? "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.")</p>
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <ul>
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        }
+    </div>
+}

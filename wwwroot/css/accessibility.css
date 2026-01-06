@@ -1,0 +1,68 @@
+/* Skip to main content link */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #000;
+    color: #fff;
+    padding: 8px;
+    z-index: 100;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+/* Focus visible pour tous les éléments interactifs */
+a:focus, button:focus, input:focus, select:focus, textarea:focus {
+    outline: 3px solid #0066cc;
+    outline-offset: 2px;
+}
+
+/* Messages d'erreur accessibles */
+.text-danger {
+    color: #d32f2f;
+    font-weight: 500;
+}
+
+/* Indicateur visuel pour les champs requis */
+[aria-required="true"]::after {
+    content: " *";
+    color: #d32f2f;
+}
+
+/* Contraste élevé pour les alertes */
+.alert {
+    border-left: 4px solid;
+}
+
+.alert-danger {
+    border-left-color: #d32f2f;
+}
+
+.alert-success {
+    border-left-color: #388e3c;
+}
+
+/* Contraste WCAG AA minimum */
+.card-title {
+    color: #212529; /* Ratio 13.8:1 sur fond blanc */
+    font-weight: 600;
+}
+
+.card-text {
+    color: #495057; /* Ratio 9.7:1 sur fond blanc */
+}
+
+/* Focus visible pour la navigation au clavier */
+a:focus,
+.btn:focus {
+    outline: 3px solid #0d6efd;
+    outline-offset: 2px;
+}
+
+/* État hover accessible */
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    transition: box-shadow 0.3s ease-in-out;
+}

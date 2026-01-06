@@ -57,7 +57,7 @@ namespace Net_P5.Models
         public string Statut => EstVendue ? "Vendue" : EstEnReparation ? "En réparation" : EnVente ? "Disponible" : "Indisponible";
 
          [NotMapped]
-        public string NomComplet => $"{Finition?.Modele?.Marque?.Nom} {Finition?.Modele?.Nom} {Finition?.Nom}";
+        public string NomComplet => $"{Marque?.Nom} {Modele?.Nom} {Finition?.Nom}";
 
         //Prix de vente calculé automatiquement
         //[NotMapped]
