@@ -3,6 +3,21 @@
     Layout = "~/Views/Shared/_LayoutCreate.cshtml";
 }
 
+@if (!User.IsInRole("Admin"))
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-4 offset-4">
+                <div class="text-center mb-5">
+                    <div class="titre">Accès refusé</div>
+                    <div class="soustitre">Vous n'êtes pas administrateur du site</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    return;
+}
+
 <div class="container">
     <div class="row">
         <div class="text-center">

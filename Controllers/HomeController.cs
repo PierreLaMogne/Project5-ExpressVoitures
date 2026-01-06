@@ -1,9 +1,10 @@
-using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Net_P5.Data;
 using Net_P5.Models;
+using System.Diagnostics;
 
 namespace Net_P5.Controllers
 {
@@ -40,6 +41,7 @@ namespace Net_P5.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
             await PopulateDropdowns();
@@ -47,6 +49,7 @@ namespace Net_P5.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(VoitureViewModel model, IFormFile? Photo)
         {
@@ -148,14 +151,21 @@ namespace Net_P5.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult CreateConfirmation()
         {
             return View();
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(string id)
         {
+            if (id != _context.Voitures.FirstOrDefault(v => v.CodeVIN == id)?.CodeVIN)
+            {
+                return BadRequest();
+            }
+
             var voiture = await _context.Voitures
                 .Include(v => v.Finition.Modele.Marque)
                 .FirstOrDefaultAsync(v => v.CodeVIN == id);
@@ -179,6 +189,7 @@ namespace Net_P5.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(VoitureViewModel model, IFormFile? Photo)
         {
@@ -285,8 +296,14 @@ namespace Net_P5.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(string id)
         {
+            if(id != _context.Voitures.FirstOrDefault(v => v.CodeVIN == id)?.CodeVIN)
+            {
+                return BadRequest();
+            }
+
             var voiture = await _context.Voitures
                 .Include(v => v.Finition.Modele.Marque)
                 .FirstOrDefaultAsync(v => v.CodeVIN == id);
@@ -298,6 +315,7 @@ namespace Net_P5.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         [ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(string id)
