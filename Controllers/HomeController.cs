@@ -22,7 +22,6 @@ namespace Net_P5.Controllers
         {
             var voitures = await _context.Voitures
                 .Include(v => v.Finition.Modele.Marque)
-                .Include(v => v.Reparations)
                 .ToListAsync();
             return View(voitures);
         }
@@ -32,7 +31,6 @@ namespace Net_P5.Controllers
         {
             var voiture = await _context.Voitures
                 .Include(v => v.Finition.Modele.Marque)
-                .Include(v => v.Reparations)
                 .FirstOrDefaultAsync(v => v.CodeVIN == id);
             if (voiture == null)
             {
@@ -138,6 +136,124 @@ namespace Net_P5.Controllers
         {
             return View();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(string id)
+        {
+            var voiture = await _context.Voitures
+                .Include(v => v.Finition.Modele.Marque)
+                .FirstOrDefaultAsync(v => v.CodeVIN == id);
+
+            if (voiture == null)
+                return NotFound();
+
+            var viewModel = new VoitureViewModel
+            {
+                CodeVIN = voiture.CodeVIN,
+                PrixVente = voiture.PrixVente,
+                Annee = voiture.Annee,
+                MarqueId = voiture.MarqueId,
+                ModeleId = voiture.ModeleId,
+                FinitionId = voiture.FinitionId,
+                PhotoUrl = voiture.PhotoUrl
+            };
+
+            await PopulateDropdowns();
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(VoitureViewModel model, IFormFile? Photo)
+        {
+            //Vérification du format des données
+            if (!ModelState.IsValid)
+            {
+                await PopulateDropdowns();
+                return View(model);
+            }
+
+            //Récupération de la voiture existante
+            var voiture = await _context.Voitures.FirstOrDefaultAsync(v => v.CodeVIN == model.CodeVIN);
+            if (voiture == null)
+            {
+                return NotFound();
+            }
+
+            //Vérification du couple Marque-Modele
+            var modele = await _context.Modeles.FirstOrDefaultAsync(m => m.Id == model.ModeleId);
+            if (modele == null || modele.MarqueId != model.MarqueId)
+            {
+                ModelState.AddModelError(string.Empty, "Le modèle choisi n'appartient pas à la marque sélectionnée");
+                await PopulateDropdowns();
+                return View(model);
+            }
+
+            //Vérification du couple Modele-Finition
+            var finition = await _context.Finitions.FirstOrDefaultAsync(f => f.Id == model.FinitionId);
+            if (finition == null || finition.ModeleId != model.ModeleId)
+            {
+                ModelState.AddModelError(string.Empty, "La finition choisie n'appartient pas au modèle sélectionné");
+                await PopulateDropdowns();
+                return View(model);
+            }
+
+            // Vérification du fichier photo
+            if (Photo != null)
+            {
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+                var extension = Path.GetExtension(Photo.FileName).ToLowerInvariant();
+
+                if (!allowedExtensions.Contains(extension))
+                {
+                    ModelState.AddModelError("Photo", "Format non autorisé. Utilisez JPG, PNG, GIF ou WebP.");
+                    await PopulateDropdowns();
+                    return View(model);
+                }
+
+                if (Photo.Length > 5 * 1024 * 1024) // 5 Mo
+                {
+                    ModelState.AddModelError("Photo", "La taille de l'image ne doit pas dépasser 5 Mo.");
+                    await PopulateDropdowns();
+                    return View(model);
+                }
+
+                // Suppression de l'ancienne photo si elle existe
+                if (!string.IsNullOrEmpty(voiture.PhotoUrl))
+                {
+                    var oldPhotoPath = Path.Combine(_env.WebRootPath, voiture.PhotoUrl.TrimStart('/'));
+                    if (System.IO.File.Exists(oldPhotoPath))
+                    {
+                        System.IO.File.Delete(oldPhotoPath);
+                    }
+                }
+
+                // Sauvegarde de la nouvelle photo
+                var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
+                Directory.CreateDirectory(uploadsFolder);
+                var uniqueFileName = $"{Guid.NewGuid()}_{Photo.FileName}";
+                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await Photo.CopyToAsync(fileStream);
+                }
+                voiture.PhotoUrl = "/uploads/" + uniqueFileName;
+            }
+
+            //Mise à jour des propriétés de la voiture
+            voiture.CodeVIN = model.CodeVIN;
+            voiture.PrixVente = model.PrixVente;
+            voiture.Annee = model.Annee;
+            voiture.MarqueId = model.MarqueId;
+            voiture.ModeleId = model.ModeleId;
+            voiture.FinitionId = model.FinitionId;
+
+            //Enregistrement des modifications et redirection
+            _context.Voitures.Update(voiture);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new { id = voiture.CodeVIN});
+        }
+
 
         public IActionResult Privacy()
         {

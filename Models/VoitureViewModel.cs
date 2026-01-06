@@ -31,5 +31,6 @@ namespace Net_P5.Models
         public int FinitionId { get; set; }
         
         public IFormFile? Photo { get; set; }
+        public string? PhotoUrl { get; set; }
     }
 }

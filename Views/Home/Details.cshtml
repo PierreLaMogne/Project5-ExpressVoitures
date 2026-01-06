@@ -29,7 +29,7 @@
                             {
                                 <div class="text-normal ms-1 mb-5">
                                     Vous avez publié cette annonce, vous pouvez la :
-                                    <a class="btn btn-modifier" asp-action="Edit" asp-route-id="@Model.CodeVIN">Modifier</a>
+                                    <a class="btn btn-modifier" asp-controller="Home" asp-action="Edit" asp-route-id="@Model.CodeVIN">Modifier</a>
                                     <a class="btn btn-supprimer" data-bs-toggle="modal" data-bs-target="#ConfirmerSuppression">Supprimer</a>
                                 </div>
                             }
