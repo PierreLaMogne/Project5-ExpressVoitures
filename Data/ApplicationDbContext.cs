@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Net_P5.Models;
+using System.Reflection.Emit;
 
 namespace Net_P5.Data
 {
@@ -11,12 +12,12 @@ namespace Net_P5.Data
         {
         }
 
-        public DbSet<Marque> Marques { get; set; }
-        public DbSet<Modele> Modeles { get; set; }
-        public DbSet<Finition> Finitions { get; set; }
-        public DbSet<Voiture> Voitures { get; set; }
-        public DbSet<Reparation> Reparations { get; set; }
-        public DbSet<Vente> Ventes { get; set; }
+        public DbSet<Marque> Marques => Set<Marque>();
+        public DbSet<Modele> Modeles => Set<Modele>();
+        public DbSet<Finition> Finitions => Set<Finition>();
+        public DbSet<Voiture> Voitures => Set<Voiture>();
+        public DbSet<Reparation> Reparations => Set<Reparation>();
+        public DbSet<Vente> Ventes => Set<Vente>();
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -35,7 +36,7 @@ namespace Net_P5.Data
                 .WithOne(r => r.Voiture)
                 .HasForeignKey(r => r.VoitureCodeVIN)
                 .OnDelete(DeleteBehavior.Cascade);
-                
+
             builder.Entity<Voiture>()
                 .HasMany(v => v.Ventes)
                 .WithOne(ve => ve.Voiture)
@@ -44,18 +45,30 @@ namespace Net_P5.Data
 
             builder.Entity<Marque>()
                 .HasMany(m => m.Modeles)
-                .WithOne(md => md.Marque)
-                .HasForeignKey(md => md.MarqueId)
+                .WithOne(mo => mo.Marque)
+                .HasForeignKey(mo => mo.MarqueId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Marque>()
+                .HasMany(m => m.Voitures)
+                .WithOne(v => v.Marque)
+                .HasForeignKey(v => v.MarqueId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Modele>()
-                .HasMany(md => md.Finitions)
+                .HasMany(mo => mo.Finitions)
                 .WithOne(f => f.Modele)
                 .HasForeignKey(f => f.ModeleId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Entity<Modele>()
+                .HasMany(mo => mo.Voitures)
+                .WithOne(v => v.Modele)
+                .HasForeignKey(v => v.ModeleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.Entity<Finition>()
-                .HasMany(f => f.Voitures)
+                .HasMany(mo => mo.Voitures)
                 .WithOne(v => v.Finition)
                 .HasForeignKey(v => v.FinitionId)
                 .OnDelete(DeleteBehavior.Restrict);

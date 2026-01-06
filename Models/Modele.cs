@@ -21,5 +21,6 @@ namespace Net_P5.Models
 
         //Collections de navigation
         public virtual ICollection<Finition> Finitions { get; set; } = new List<Finition>();
+        public virtual ICollection<Voiture> Voitures { get; set; } = new List<Voiture>();
     }
 }

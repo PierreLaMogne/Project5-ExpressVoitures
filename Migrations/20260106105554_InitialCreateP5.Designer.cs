@@ -3,17 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Net_P5.Data;
 
 #nullable disable
 
-namespace Net_P5.Data.Migrations
+namespace Net_P5.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260106105554_InitialCreateP5")]
+    partial class InitialCreateP5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -359,6 +362,12 @@ namespace Net_P5.Data.Migrations
                     b.Property<int>("FinitionId")
                         .HasColumnType("int");
 
+                    b.Property<int>("MarqueId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ModeleId")
+                        .HasColumnType("int");
+
                     b.Property<string>("PhotoUrl")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
@@ -374,6 +383,10 @@ namespace Net_P5.Data.Migrations
                     b.HasKey("CodeVIN");
 
                     b.HasIndex("FinitionId");
+
+                    b.HasIndex("MarqueId");
+
+                    b.HasIndex("ModeleId");
 
                     b.ToTable("Voitures");
                 });
@@ -481,7 +494,23 @@ namespace Net_P5.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Net_P5.Models.Marque", "Marque")
+                        .WithMany("Voitures")
+                        .HasForeignKey("MarqueId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Net_P5.Models.Modele", "Modele")
+                        .WithMany("Voitures")
+                        .HasForeignKey("ModeleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Finition");
+
+                    b.Navigation("Marque");
+
+                    b.Navigation("Modele");
                 });
 
             modelBuilder.Entity("Net_P5.Models.Finition", b =>
@@ -492,11 +521,15 @@ namespace Net_P5.Data.Migrations
             modelBuilder.Entity("Net_P5.Models.Marque", b =>
                 {
                     b.Navigation("Modeles");
+
+                    b.Navigation("Voitures");
                 });
 
             modelBuilder.Entity("Net_P5.Models.Modele", b =>
                 {
                     b.Navigation("Finitions");
+
+                    b.Navigation("Voitures");
                 });
 
             modelBuilder.Entity("Net_P5.Models.Voiture", b =>

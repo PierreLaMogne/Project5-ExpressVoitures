@@ -14,5 +14,6 @@ namespace Net_P5.Models
 
         //Collections de navigation
         public virtual ICollection<Modele> Modeles { get; set; } = new List<Modele>();
+        public virtual ICollection<Voiture> Voitures { get; set; } = new List<Voiture>();
     }
 }

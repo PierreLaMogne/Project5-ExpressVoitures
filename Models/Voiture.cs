@@ -66,6 +66,14 @@ namespace Net_P5.Models
 
         //Clés étrangères
 
+        [ForeignKey(nameof(MarqueId))]
+        public int MarqueId { get; set; }
+        public virtual Marque Marque { get; set; } = null!;
+
+        [ForeignKey(nameof(ModeleId))]
+        public int ModeleId { get; set; }
+        public virtual Modele Modele { get; set; } = null!;
+
         [ForeignKey(nameof(FinitionId))]
         public int FinitionId { get; set; }
         public virtual Finition Finition { get; set; } = null!;
