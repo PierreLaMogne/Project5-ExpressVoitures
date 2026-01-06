@@ -1,0 +1,81 @@
+﻿@model Net_P5.Models.Voiture
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+
+@{
+    ViewData["Title"] = "Détails de la voiture";
+}
+
+<div class="container">
+    <div class="col">
+        <div class="card h-100 border-0">
+            <div class="row">
+                <div class="mb-4">
+                    <a asp-action="Index" class="return-link text-decoration-none">← Retour</a>
+                </div>
+                <div class="row g-0">
+                    <div class="col-8">
+                        @if (Model.PhotoUrl == null)
+                        {
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/Fiat500-pot-de-yaourt-av-byRundvald.jpg" class="img-fluid rounded-start-3 rounded-end-1" alt="@Model.NomComplet" />
+                        }
+                        else
+                        {
+                            <img src="@Model.PhotoUrl" class="img-fluid rounded-start-3 rounded-end-1" alt="@Model.NomComplet" />
+                        }
+                        </div>
+                        <div class="col-4">
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <div class="text-normal ms-1 mb-5">
+                                    Vous avez publié cette annonce, vous pouvez la :
+                                    <a class="btn btn-modifier" asp-action="Edit" asp-route-id="@Model.CodeVIN">Modifier</a>
+                                    <a class="btn btn-supprimer" data-bs-toggle="modal" data-bs-target="#ConfirmerSuppression">Supprimer</a>
+                                </div>
+                            }
+                            <div class="modal fade" id="ConfirmerSuppression" tabindex="-1" aria-labelledby="ModalSuppression" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <div class="modal-title fs-5" id="ModalSuppression">Confirmer la suppression ?</div>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row d-flex justify-content-center">
+                                                <form asp-controller="Home" asp-action="Delete" asp-route-id="@Model.CodeVIN" method="post">
+                                                    <button type="submit" class="btn btn-primary">Oui, supprimer</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="card-body align-content-center">
+                            <p class="card-title fw-bold mb-5">@Model.PrixVente.ToString("C2")</p>
+                            <p class="card-text mb-4">@Model.Annee</p>
+                            <p class="card-text mb-4">@Model.Finition.Modele.Marque.Nom</p>
+                            <p class="card-text mb-4">@Model.Finition.Modele.Nom</p>
+                            <p class="card-text mb-4">@Model.Finition.Nom</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Script pour initialisation des popovers-->
+@section Scripts {
+    <script>
+        $(document).ready(function(){
+            var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+            var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+                return new bootstrap.Popover(popoverTriggerEl, {
+                    html: true,
+                    trigger: 'click'
+                });
+            });
+        });
+    </script>
+}

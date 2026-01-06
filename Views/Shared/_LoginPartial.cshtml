@@ -8,7 +8,7 @@
     @if (SignInManager.IsSignedIn(User))
     {
         <li class="nav-item">
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Voiture", new { area = "" })">
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                 <button type="submit" class="nav-link btn btn-link text-dark">Se déconnecter</button>
             </form>
         </li>

@@ -19,6 +19,7 @@ namespace Net_P5.Controllers
             var voitures = await _context.Voitures
                 .Include(v => v.Finition.Modele.Marque)
                 .Include(v => v.Reparations)
+                .Include(v => v.Ventes)
                 .ToListAsync();
             return View(voitures);
         }
@@ -26,7 +27,11 @@ namespace Net_P5.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(string id)
         {
-            var voiture = await _context.Voitures.FindAsync(id);
+            var voiture = await _context.Voitures
+                .Include(v => v.Finition.Modele.Marque)
+                .Include(v => v.Reparations)
+                .Include(v => v.Ventes)
+                .FirstOrDefaultAsync(v => v.CodeVIN == id);
             if (voiture == null)
             {
                 return NotFound();

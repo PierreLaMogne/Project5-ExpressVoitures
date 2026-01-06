@@ -360,7 +360,6 @@ namespace Net_P5.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("PhotoUrl")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 

@@ -16,6 +16,7 @@ namespace Net_P5.Controllers
             _context = context;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var voitures = await _context.Voitures
@@ -24,6 +25,24 @@ namespace Net_P5.Controllers
                 .ToListAsync();
             return View(voitures);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Details(string id)
+        {
+            var voiture = await _context.Voitures
+                .Include(v => v.Finition.Modele.Marque)
+                .Include(v => v.Reparations)
+                .FirstOrDefaultAsync(v => v.CodeVIN == id);
+            if (voiture == null)
+            {
+                return NotFound();
+            }
+            return View(voiture);
+        }
+
+
+
+
 
         public IActionResult Privacy()
         {

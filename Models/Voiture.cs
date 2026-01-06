@@ -36,18 +36,19 @@ namespace Net_P5.Models
 
         [NotMapped]
         [Display(Name = "Photo de la voiture")]
-        public IFormFile Photo { get; set; } = null!;
+        public IFormFile? Photo { get; set; }
 
         [MaxLength(255)]
         [Display(Name = "Chemin de la photo")]
-        public string PhotoUrl { get; set; } = string.Empty;
+        public string? PhotoUrl { get; set; }
 
-        [Display(Name = "Est-ce que la boiture est en vente ?")]
+        [Display(Name = "Est-ce que la voiture est en vente ?")]
         public bool EnVente { get; set; } = false;
 
-        public bool EstVendue => Ventes.Any();
-
         //Propriétés calculées
+
+        [NotMapped]
+        public bool EstVendue => Ventes.Any();
 
         [NotMapped]
         public bool EstEnReparation => Reparations.Any(r => r.DateDisponibilite > DateOnly.FromDateTime(DateTime.Now));
@@ -55,12 +56,13 @@ namespace Net_P5.Models
         [NotMapped]
         public string Statut => EstVendue ? "Vendue" : EstEnReparation ? "En réparation" : EnVente ? "Disponible" : "Indisponible";
 
+         [NotMapped]
+        public string NomComplet => $"{Finition?.Modele?.Marque?.Nom} {Finition?.Modele?.Nom} {Finition?.Nom}";
+
         //Prix de vente calculé automatiquement
         //[NotMapped]
         //public decimal PrixVente => Reparations.Sum(r => r.Cout) + PrixAchat;
 
-        [NotMapped]
-        public string NomComplet => $"{Finition?.Modele?.Marque?.Nom} {Finition?.Modele?.Nom} {Finition?.Nom}";
 
         //Clés étrangères
 
