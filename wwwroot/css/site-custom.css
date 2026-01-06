@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&display=swap');
+
+navbar-brand {
+    font-family: Libre Baskerville;
+    font-weight: 700 !important;
+    font-size: 1.25rem;
+    line-height: 100%;
+    letter-spacing: -7%;
+    color: rgba(44,24,16,1)
+}
+
+.nav-item {
+    font-family: Libre Baskerville;
+    font-weight: 400;
+    font-size: 0.88rem;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: rgba(0,0,0,1)
+}
+
+    .nav-item:hover {
+        font-weight: 700;
+    }
+
+.titre {
+    font-family: Libre Baskerville;
+    font-weight: 400;
+    font-style: Italic;
+    font-size: 2.75rem;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-align: center;
+    color: rgba(121,97,87,1)
+}
+
+.soustitre {
+    font-family: Libre Baskerville;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-align: center;
+    color: rgba(44,24,16,1)
+}
+
+.text-normal {
+    font-family: DM Sans;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: rgba(44,24,16,1)
+}
+
+.return-link {
+    font-family: DM Sans;
+    font-weight: 400;
+    font-size: 0.88rem;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-align: center;
+    color: rgba(121,97,87,1)
+}
+
+.card-title {
+    font-family: Libre Baskerville;
+    font-weight: 700;
+    font-size: 1.38rem;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: rgba(44,24,16,1)
+}
+
+.card-text {
+    font-family: DM Sans;
+    font-weight: 400;
+    font-size: 1.13rem;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: rgba(121,97,87,1)
+}
+
+.btn-primary {
+    background: rgba(217, 169, 99, 1);
+    font-family: DM Sans;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-align: center;
+    color: rgba(44,24,16,1)
+}
+
+    .btn-primary:hover {
+        background: rgba(185, 144, 86, 1);
+    }
+
+.btn-modifier {
+    font-family: DM Sans;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-decoration: underline;
+    text-decoration-style: solid;
+    text-decoration-thickness: 0%;
+    color: rgba(146,146,146,1)
+}
+
+.btn-supprimer {
+    font-family: DM Sans;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-decoration: underline;
+    text-decoration-style: solid;
+    text-decoration-thickness: 0%;
+    color: rgba(255,0,0,1)
+}
+
+.form-label {
+    font-family: DM Sans;
+    font-weight: 400;
+    font-size: 1.13rem;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: rgba(44,24,16,1)
+}
+
+.login-title {
+    font-family: Libre Baskerville;
+    font-weight: 700;
+    font-size: 2.6rem;
+    line-height: 100%;
+    letter-spacing: -7%;
+    text-align: center;
+    color: rgba(44,24,16,1)
+}
+
+.plus-icon {
+    font-size: 2rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.plus-icon-box {
+    height: 3rem;
+    width: 3rem;
+    align-items: center;
+    justify-content: center;
+}

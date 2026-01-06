@@ -1,8 +1,53 @@
-﻿@{
+﻿@model IEnumerable<Net_P5.Models.Voiture>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container">
+    <div class="row mb-5">
+        <div class="text-center">
+            <div class="titre mb-3">Nos voitures</div>
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-controller="voiture" asp-action="Create" class="btn btn-primary">+ Ajouter une voiture</a>
+            }
+        </div>
+    </div>
+    <div class="row row-cols-1 row-cols-lg-2 g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col">
+                <a asp-controller="Voiture" asp-action="Details" asp-route-id="@item.CodeVIN" class="text-decoration-none">
+                    <div class="card h-100 border-0">
+                        <div class="row g-0 d-flex align-items-center">
+                            <div class="col-8">
+                                @if (!string.IsNullOrEmpty(item.PhotoUrl))
+                                {
+                                    <div class="ratio ratio-4x3 rounded-start-3 rounded-end-1">
+                                        <img src="@item.PhotoUrl" class="img-fluid w-100 h-100" alt="@item.NomComplet" />
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="ratio ratio-4x3 rounded-start-3 rounded-end-1">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/Fiat500-pot-de-yaourt-av-byRundvald.jpg" class="img-fluid w-100 h-100" alt="@item.NomComplet" />
+                                    </div>
+                                }
+                            </div>
+                            <div class="col-4">
+                                <div class="card-body p-1">
+                                    <p class="card-title mb-2">@item.PrixVente.ToString("C2")</p>
+                                    <p class="card-text mb-1">@item.Annee</p>
+                                    <p class="card-text mb-1">@item.Finition?.Modele?.Marque?.Nom</p>
+                                    <p class="card-text mb-1">@item.Finition?.Modele?.Nom</p>
+                                    <p class="card-text mb-1">@item.Finition?.Nom</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
 </div>
