@@ -1,0 +1,41 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Connexion";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-4 offset-4">
+            <div class="mb-5">
+                <p class="login-title">Express Voitures</p>
+            </div>
+            <form id="account" method="post">
+                <div class="mb-3">
+                    <label class="form-label">Adresse e-mail</label>
+                    <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Mot de passe</label>
+                    <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" />
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+                <div class="d-flex align-items-center justify-content-center gap-3">
+                    <button type="submit" class="btn btn-primary">Se connecter</button>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <span class="fw-bold text-muted fs-6">ou</span>
+                        <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-primary">S'inscrire</a>
+                    }
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

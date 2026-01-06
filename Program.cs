@@ -10,11 +10,38 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+// Identity configuration
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
+//MVC configuration
+builder.Services.AddControllersWithViews();
+
 var app = builder.Build();
+
+//Create a scope for admin user creation and dataseeding
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        await CreateAdminUser(services);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while creating the admin user.");
+    }
+
+    if (app.Environment.IsDevelopment())
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        context.Database.Migrate();
+        DataSeeder.Seed(context);
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -29,8 +56,9 @@ else
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
@@ -40,7 +68,39 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
-app.MapRazorPages()
-   .WithStaticAssets();
+app.MapRazorPages();
 
 app.Run();
+
+// Create an admin user and role method
+async Task CreateAdminUser(IServiceProvider serviceProvider)
+{
+    var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+    string adminRoleName = "Admin";
+    string adminUserEmail = "admin@expressvoitures.com";
+    string adminUserPassword = "Admin@123";
+
+    // Check if the admin role exists, if not create it
+    if (!await roleManager.RoleExistsAsync(adminRoleName))
+    {
+        await roleManager.CreateAsync(new IdentityRole(adminRoleName));
+    }
+    // Check if the admin user exists, if not create it
+    var adminUser = await userManager.FindByEmailAsync(adminUserEmail);
+    if (adminUser == null)
+    {
+        adminUser = new IdentityUser
+        {
+            UserName = adminUserEmail,
+            Email = adminUserEmail,
+            EmailConfirmed = true
+        };
+        var result = await userManager.CreateAsync(adminUser, adminUserPassword);
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(adminUser, adminRoleName);
+        }
+    }
+}

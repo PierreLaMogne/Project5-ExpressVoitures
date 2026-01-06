@@ -1,0 +1,129 @@
+﻿@model VoitureViewModel
+@using Net_P5.Data
+@inject ApplicationDbContext DbContext
+@using Microsoft.EntityFrameworkCore
+
+@{
+    ViewData["Title"] = "Ajouter une voiture";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-4 offset-4">
+            <div class="text-center mb-5">
+                <span class="titre">Ajouter une voiture</span>
+                <span class="soustitre">tous les champs sont obligatoires</span>
+            </div>
+            <form asp-controller="Home" asp-action="Edit" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
+                <div class="mb-3">
+                    <label asp-for="CodeVIN" class="form-label">Code VIN du véhicule</label>
+                    <input asp-for="CodeVIN" class="form-control border-dark">
+                    <span asp-validation-for="CodeVIN" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="PrixVente" class="form-label">Prix de vente</label>
+                    <input asp-for="PrixVente" class="form-control border-dark">
+                    <span asp-validation-for="PrixVente" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Annee" class="form-label">Année</label>
+                    <input asp-for="Annee" class="form-control border-dark">
+                    <span asp-validation-for="Annee" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Marque</label>
+                    <select asp-for="MarqueId" class="form-select border-dark" required>
+                        <option value="@Model.MarqueId" disabled selected>Sélectionnez une marque</option>
+                        @foreach (var marque in ViewBag.Marques)
+                        {
+                            <option value="@marque.Id">@marque.Nom</option>
+                        }
+                    </select>
+                    <span asp-validation-for="MarqueId" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Modèle</label>
+                    <select asp-for="ModeleId" class="form-select border-dark" required>
+                        <option value="@Model.ModeleId" disabled selected>Sélectionnez un modèle</option>
+                        @foreach (var modele in ViewBag.Modeles)
+                        {
+                            <option value="@modele.Id" data-marque="@modele.MarqueId">@modele.Nom</option>
+                        }
+                    </select>
+                    <span asp-validation-for="ModeleId" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Finition</label>
+                    <select asp-for="FinitionId" class="form-select border-dark" required>
+                        <option value="@Model.FinitionId" disabled selected>Sélectionnez une finition</option>
+                        @foreach (var finition in ViewBag.Finitions)
+                        {
+                            <option value="@finition.Id" data-modele="@finition.ModeleId">@finition.Nom</option>
+                        }
+                    </select>
+                    <span asp-validation-for="FinitionId" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Photo" class="form-label mb-2">Photo de la voiture</label>
+                    <div class="border border-dark rounded p-3">
+                        <div class="file-upload-wrapper d-flex align-items-center">
+                            <input asp-for="Photo" class="form-control d-none" type="file" accept="image/*" id="photoInput" />
+                            <label for="photoInput" class="d-flex align-items-center w-100 p-2">
+                                <span class="border border-dark border-2 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                                    <i class="bi bi-plus-lg"></i>
+                                </span>
+                                <span class="flex-grow-1 text-center fw-medium text-muted" id="photoLabel">
+                                    @if (!string.IsNullOrEmpty(Model.PhotoUrl))
+                                    {
+                                        <text>Modifier photo</text>
+                                    }
+                                    else
+                                    {
+                                        <text>Ajouter photo</text>
+                                    }
+                                </span>
+                            </label>
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.PhotoUrl))
+                        {
+                            <img src="@Model.PhotoUrl" id="photoPreview" class="img-fluid rounded mt-3" style="max-height: 200px;" alt="Photo actuelle" />
+                        }
+                    </div>
+                    <span asp-validation-for="Photo" class="text-danger"></span>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--Affichage de la photo uploadée-->
+@section Scripts {
+    <script>
+        document.getElementById('photoInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    // Créer ou mettre à jour l'aperçu
+                    let preview = document.getElementById('photoPreview');
+                    if (!preview) {
+                        preview = document.createElement('img');
+                        preview.id = 'photoPreview';
+                        preview.className = 'img-fluid rounded mt-3';
+                        preview.style.maxHeight = '200px';
+                        document.querySelector('.file-upload-wrapper').parentElement.appendChild(preview);
+                    }
+                    preview.src = event.target.result;
+
+                    // Mettre à jour le texte du label
+                    document.getElementById('photoLabel').textContent = file.name;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+}
