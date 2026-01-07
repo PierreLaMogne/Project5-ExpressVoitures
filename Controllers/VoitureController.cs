@@ -66,6 +66,16 @@ namespace Net_P5.Controllers
                 return View(model);
             }
 
+            //Vérification des dates
+            if (model.DateDisponibilite < model.DateAchat)
+            {
+                ModelState.AddModelError("DateDisponibilite", "La date de disponibilité est antérieure à la date d'achat'");
+                ModelState.AddModelError("DateAchat", "La date d'achat est postérieure à la date de disponibilité");
+                ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
+                await PopulateDropdowns();
+                return View(model);
+            }
+
             // Vérification du fichier photo
             if (model.Photo != null)
             {
@@ -224,6 +234,28 @@ namespace Net_P5.Controllers
             if (finition == null || finition.ModeleId != model.ModeleId)
             {
                 ModelState.AddModelError("FinitionId", "La finition choisie n'appartient pas au modèle sélectionné");
+                ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
+                await PopulateDropdowns();
+                return View(model);
+            }
+
+            //Vérification des dates
+            if(model.DateVente.HasValue)
+            {
+                if(model.DateVente < model.DateDisponibilite)
+                {
+                    ModelState.AddModelError("DateVente", "La date de vente est antérieure à la date de disponibilité");
+                    ModelState.AddModelError("DateDisponibilite", "La date de disponibilité est postérieure à la date de vente");
+                    ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
+                    await PopulateDropdowns();
+                    return View(model);
+                }
+            }
+
+            if(model.DateDisponibilite < model.DateAchat)
+            {
+                ModelState.AddModelError("DateDisponibilite", "La date de disponibilité est antérieure à la date d'achat'");
+                ModelState.AddModelError("DateAchat", "La date d'achat est postérieure à la date de disponibilité");
                 ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
                 await PopulateDropdowns();
                 return View(model);
