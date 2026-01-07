@@ -1,0 +1,54 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Inscription";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+
+@if (!User.IsInRole("Admin"))
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-4 offset-4">
+                <div class="text-center mb-5">
+                    <div class="titre">Accès refusé</div>
+                    <div class="soustitre">Vous n'êtes pas administrateur du site</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    return;
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-4 offset-4">
+            <div class="mb-5">
+                <p class="login-title">Express Voitures</p>
+            </div>
+            <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                <div class="mb-3">
+                    <label asp-for="Input.Email" class="form-label">Adresse e-mail</label>
+                    <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true"/>
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Input.Password" class="form-label">Mot de passe</label>
+                    <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true"/>
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Input.ConfirmPassword" class="form-label">Confirmation du mot de passe</label>
+                    <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true"/>
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                </div>
+                <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Créer un compte</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
