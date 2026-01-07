@@ -7,21 +7,6 @@
     ViewData["Title"] = "Modifier une voiture";
 }
 
-@if (!User.IsInRole("Admin"))
-{
-    <div class="container">
-        <div class="row">
-            <div class="col-4 offset-4">
-                <div class="text-center mb-5">
-                    <div class="titre">Accès refusé</div>
-                    <div class="soustitre">Vous n'êtes pas administrateur du site</div>
-                </div>
-            </div>
-        </div>
-    </div>
-    return;
-}
-
 <div class="container">
     <div class="row">
         <div class="col-4 offset-4">
@@ -29,7 +14,7 @@
                 <span class="titre">Ajouter une voiture</span>
                 <span class="soustitre">tous les champs sont obligatoires</span>
             </div>
-            <form asp-controller="Home" asp-action="Edit" method="post" enctype="multipart/form-data">
+            <form asp-controller="Voiture" asp-action="Edit" method="post" enctype="multipart/form-data">
                 <div asp-validation-summary="All" class="text-danger mb-3"></div>
                 <div class="mb-3">
                     <label asp-for="CodeVIN" class="form-label">Code VIN du véhicule</label>

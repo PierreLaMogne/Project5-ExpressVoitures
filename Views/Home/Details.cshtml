@@ -29,7 +29,7 @@
                             {
                                 <div class="text-normal ms-1 mb-5">
                                     Vous avez publié cette annonce, vous pouvez la :
-                                    <a class="btn btn-modifier" asp-controller="Home" asp-action="Edit" asp-route-id="@Model.CodeVIN">Modifier</a>
+                                    <a class="btn btn-modifier" asp-controller="Voiture" asp-action="Edit" asp-route-id="@Model.CodeVIN">Modifier</a>
                                     <a class="btn btn-supprimer" data-bs-toggle="modal" data-bs-target="#ConfirmerSuppression">Supprimer</a>
                                 </div>
                             }
@@ -42,7 +42,7 @@
                                         </div>
                                         <div class="modal-body">
                                             <div class="row d-flex justify-content-center">
-                                                <form asp-controller="Home" asp-action="Delete" asp-route-id="@Model.CodeVIN" method="post">
+                                                <form asp-controller="Voiture" asp-action="Delete" asp-route-id="@Model.CodeVIN" method="post">
                                                     <button type="submit" class="btn btn-primary">Oui, supprimer</button>
                                                 </form>
                                             </div>
