@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Net_P5.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreateP5 : Migration
+    public partial class InitialP5 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -217,12 +217,11 @@ namespace Net_P5.Migrations
                     Annee = table.Column<int>(type: "int", nullable: false),
                     DateAchat = table.Column<DateOnly>(type: "date", nullable: false),
                     PrixAchat = table.Column<decimal>(type: "decimal(12,2)", precision: 12, scale: 2, nullable: false),
-                    PrixVente = table.Column<decimal>(type: "decimal(12,2)", precision: 12, scale: 2, nullable: false),
                     PhotoUrl = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     EnVente = table.Column<bool>(type: "bit", nullable: false),
-                    MarqueId = table.Column<int>(type: "int", nullable: false),
-                    ModeleId = table.Column<int>(type: "int", nullable: false),
-                    FinitionId = table.Column<int>(type: "int", nullable: false)
+                    FinitionId = table.Column<int>(type: "int", nullable: false),
+                    MarqueId = table.Column<int>(type: "int", nullable: true),
+                    ModeleId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -237,14 +236,12 @@ namespace Net_P5.Migrations
                         name: "FK_Voitures_Marques_MarqueId",
                         column: x => x.MarqueId,
                         principalTable: "Marques",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Voitures_Modeles_ModeleId",
                         column: x => x.ModeleId,
                         principalTable: "Modeles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(

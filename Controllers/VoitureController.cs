@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Humanizer.Localisation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Net_P5.Data;
@@ -92,11 +93,19 @@ namespace Net_P5.Controllers
             var voiture = new Voiture
             {
                 CodeVIN = model.CodeVIN,
-                PrixVente = model.PrixVente,
                 Annee = model.Annee,
-                MarqueId = model.MarqueId,
-                ModeleId = model.ModeleId,
-                FinitionId = model.FinitionId
+                DateAchat = model.DateAchat,
+                PrixAchat = model.PrixAchat,
+                EnVente = model.EnVente,
+                FinitionId = model.FinitionId,
+            };
+
+            //Création de la réparation
+            var reparation = new Reparation
+            {
+                Detail = model.Detail,
+                Cout = model.Cout,
+                DateDisponibilite = model.DateDisponibilite
             };
 
             //Création de la photo
@@ -118,8 +127,7 @@ namespace Net_P5.Controllers
             _context.Voitures.Add(voiture);
             await _context.SaveChangesAsync();
 
-            // Amélioration WCAG : Message de succès pour les lecteurs d'écran
-            TempData["SuccessMessage"] = "La voiture a été créée avec succès.";
+            ViewBag.NomCree = @$"{voiture.NomComplet}";
 
             return RedirectToAction(nameof(CreateConfirmation));
         }
@@ -140,21 +148,43 @@ namespace Net_P5.Controllers
 
             var voiture = await _context.Voitures
                 .Include(v => v.Finition.Modele.Marque)
+                .Include(v => v.Reparations)
+                .Include(v => v.Ventes)
                 .FirstOrDefaultAsync(v => v.CodeVIN == id);
 
             if (voiture == null)
                 return NotFound();
 
+            // Récupérer la dernière réparation et la dernière vente si elles existent
+            var reparation = voiture.Reparations?.OrderByDescending(r => r.DateDisponibilite).FirstOrDefault();
+            var vente = voiture.Ventes?.OrderByDescending(v => v.DateVente).FirstOrDefault();
+
             var viewModel = new VoitureViewModel
             {
                 CodeVIN = voiture.CodeVIN,
-                PrixVente = voiture.PrixVente,
                 Annee = voiture.Annee,
-                MarqueId = voiture.MarqueId,
-                ModeleId = voiture.ModeleId,
+                DateAchat = voiture.DateAchat,
+                PrixAchat = voiture.PrixAchat,
+                EnVente = voiture.EnVente,
+                MarqueId = voiture.Finition.Modele.MarqueId,
+                ModeleId = voiture.Finition.ModeleId,
                 FinitionId = voiture.FinitionId,
                 PhotoUrl = voiture.PhotoUrl
             };
+
+            // Attribuer les propriétés de réparation uniquement si une réparation existe
+            if (reparation != null)
+            {
+                viewModel.Detail = reparation.Detail;
+                viewModel.Cout = reparation.Cout;
+                viewModel.DateDisponibilite = reparation.DateDisponibilite;
+            }
+
+            // Attribuer les propriétés de vente uniquement si une vente existe
+            if (vente != null)
+            {
+                viewModel.DateVente = vente.DateVente;
+            }
 
             await PopulateDropdowns();
             return View(viewModel);
@@ -244,11 +274,36 @@ namespace Net_P5.Controllers
             }
 
             //Mise à jour des propriétés de la voiture
-            voiture.PrixVente = model.PrixVente;
+            voiture.CodeVIN = model.CodeVIN;
             voiture.Annee = model.Annee;
-            voiture.MarqueId = model.MarqueId;
-            voiture.ModeleId = model.ModeleId;
+            voiture.DateAchat = model.DateAchat;
+            voiture.PrixAchat = model.PrixAchat;
+            voiture.EnVente = model.EnVente;
             voiture.FinitionId = model.FinitionId;
+
+            //Mise à jour des réparations associées si nécessaire
+            var reparation = await _context.Reparations
+                .Where(r => r.VoitureCodeVIN == voiture.CodeVIN)
+                .OrderByDescending(r => r.DateDisponibilite)
+                .FirstOrDefaultAsync();
+
+            if (reparation != null)
+            {
+                reparation.Detail = model.Detail;
+                reparation.Cout = model.Cout;
+                reparation.DateDisponibilite = model.DateDisponibilite;
+            }
+
+            //Mise à jour des ventes associées si nécessaire
+            var vente = await _context.Ventes
+                .Where(v => v.VoitureCodeVIN == voiture.CodeVIN)
+                .OrderByDescending(v => v.DateVente)
+                .FirstOrDefaultAsync();
+
+            if (vente != null && model.DateVente.HasValue)
+            {
+                vente.DateVente = model.DateVente.Value;
+            }
 
             //Enregistrement des modifications et redirection
             _context.Voitures.Update(voiture);
@@ -256,12 +311,10 @@ namespace Net_P5.Controllers
 
             // Recharger complètement l'entité avec ses nouvelles propriétés de navigation
             var voitureReloaded = await _context.Voitures
-                .Include(v => v.Marque)
-                .Include(v => v.Modele)
-                .Include(v => v.Finition)
+                .Include(v => v.Finition.Modele.Marque)
                 .FirstOrDefaultAsync(v => v.CodeVIN == model.CodeVIN);
 
-            ViewBag.NomModifie = $@"{voitureReloaded!.Marque.Nom} {voitureReloaded.Modele.Nom} {voitureReloaded.Finition.Nom}";
+            ViewBag.NomModifie = @$"{voitureReloaded!.NomComplet}";
 
             return View("EditConfirmation");
         }

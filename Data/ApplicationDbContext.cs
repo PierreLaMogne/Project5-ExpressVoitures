@@ -49,22 +49,10 @@ namespace Net_P5.Data
                 .HasForeignKey(mo => mo.MarqueId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<Marque>()
-                .HasMany(m => m.Voitures)
-                .WithOne(v => v.Marque)
-                .HasForeignKey(v => v.MarqueId)
-                .OnDelete(DeleteBehavior.Restrict);
-
             builder.Entity<Modele>()
                 .HasMany(mo => mo.Finitions)
                 .WithOne(f => f.Modele)
                 .HasForeignKey(f => f.ModeleId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<Modele>()
-                .HasMany(mo => mo.Voitures)
-                .WithOne(v => v.Modele)
-                .HasForeignKey(v => v.ModeleId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Finition>()

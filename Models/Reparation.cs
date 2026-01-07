@@ -11,11 +11,12 @@ namespace Net_P5.Models
 
         [Required(ErrorMessage = "Le détail de la réparation est obligatoire.")]
         [MaxLength(200, ErrorMessage = "Le détail de la réparation ne peut pas dépasser 200 caractères.")]
-        [Display(Name = "Détail de la réparation")]
+        [Display(Name = "Détail des réparations")]
         public string Detail { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Le coût de la réparation est obligatoire.")]
         [Precision(12, 2)]
+        [Range(0, (double)decimal.MaxValue)]
         [Display(Name = "Coût de la réparation")]
         public decimal Cout { get; set; }
 

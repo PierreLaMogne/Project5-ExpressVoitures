@@ -70,13 +70,13 @@ namespace Net_P5.Data
 
                 var voitures = new List<Voiture>
                     {
-                        new Voiture { CodeVIN = "VF1MAZDA000000001", Annee = 2019, DateAchat = new DateOnly(2022, 1, 7), PrixAchat = 1800m, PrixVente = 9900m, MarqueId = marques.Single(m => m.Nom=="Mazda").Id, ModeleId = modeles.Single(mo => mo.Nom=="Miata").Id, FinitionId = finitions.Single(f => f.Nom=="LE").Id, EnVente = false },
-                        new Voiture { CodeVIN = "VF1JEEP0000000002", Annee = 2007, DateAchat = new DateOnly(2022, 4, 2), PrixAchat = 4500m, PrixVente = 5350m, MarqueId = marques.Single(m => m.Nom=="Jeep").Id, ModeleId = modeles.Single(mo => mo.Nom=="Liberty").Id, FinitionId = finitions.Single(f => f.Nom=="Sport").Id, EnVente = false },
-                        new Voiture { CodeVIN = "VF1RENAULT0000003", Annee = 2007, DateAchat = new DateOnly(2022, 4, 4), PrixAchat = 1800m, PrixVente = 2990m, MarqueId = marques.Single(m => m.Nom=="Renault").Id, ModeleId = modeles.Single(mo => mo.Nom=="Scénic").Id, FinitionId = finitions.Single(f => f.Nom=="TCe").Id, EnVente = false },
-                        new Voiture { CodeVIN = "VF1F0RD0000000004", Annee = 2017, DateAchat = new DateOnly(2022, 4, 5), PrixAchat = 24350m, PrixVente = 25950m, MarqueId = marques.Single(m => m.Nom=="Ford").Id, ModeleId = modeles.Single(mo => mo.Nom=="Explorer").Id, FinitionId = finitions.Single(f => f.Nom=="XLT").Id, EnVente = false },
-                        new Voiture { CodeVIN = "VF1H0NDA000000005", Annee = 2008, DateAchat = new DateOnly(2022, 4, 6), PrixAchat = 4000m, PrixVente = 4975m, MarqueId = marques.Single(m => m.Nom=="Honda").Id, ModeleId = modeles.Single(mo => mo.Nom=="Civic").Id, FinitionId = finitions.Single(f => f.Nom=="LX").Id, EnVente = false },
-                        new Voiture { CodeVIN = "VF1V0LKSWAGEN0006", Annee = 2016, DateAchat = new DateOnly(2022, 4, 6), PrixAchat = 15250m, PrixVente = 16190m, MarqueId = marques.Single(m => m.Nom=="Volkswagen").Id, ModeleId = modeles.Single(mo => mo.Nom=="GTI").Id, FinitionId = finitions.Single(f => f.Nom=="S").Id, EnVente = false },
-                        new Voiture { CodeVIN = "VF1F0RD0000000007", Annee = 2013, DateAchat = new DateOnly(2022, 4, 7), PrixAchat = 10990m, PrixVente = 12440m, MarqueId = marques.Single(m => m.Nom=="Ford").Id, ModeleId = modeles.Single(mo => mo.Nom=="Edge").Id, FinitionId = finitions.Single(f => f.Nom=="SEL").Id, EnVente = false }
+                        new Voiture { CodeVIN = "VF1MAZDA000000001", Annee = 2019, DateAchat = new DateOnly(2022, 1, 7), PrixAchat = 1800m, FinitionId = finitions.Single(f => f.Nom=="LE").Id, EnVente = false },
+                        new Voiture { CodeVIN = "VF1JEEP0000000002", Annee = 2007, DateAchat = new DateOnly(2022, 4, 2), PrixAchat = 4500m, FinitionId = finitions.Single(f => f.Nom=="Sport").Id, EnVente = false },
+                        new Voiture { CodeVIN = "VF1RENAULT0000003", Annee = 2007, DateAchat = new DateOnly(2022, 4, 4), PrixAchat = 1800m, FinitionId = finitions.Single(f => f.Nom=="TCe").Id, EnVente = false },
+                        new Voiture { CodeVIN = "VF1F0RD0000000004", Annee = 2017, DateAchat = new DateOnly(2022, 4, 5), PrixAchat = 24350m, FinitionId = finitions.Single(f => f.Nom=="XLT").Id, EnVente = false },
+                        new Voiture { CodeVIN = "VF1H0NDA000000005", Annee = 2008, DateAchat = new DateOnly(2022, 4, 6), PrixAchat = 4000m, FinitionId = finitions.Single(f => f.Nom=="LX").Id, EnVente = false },
+                        new Voiture { CodeVIN = "VF1V0LKSWAGEN0006", Annee = 2016, DateAchat = new DateOnly(2022, 4, 6), PrixAchat = 15250m, FinitionId = finitions.Single(f => f.Nom=="S").Id, EnVente = false },
+                        new Voiture { CodeVIN = "VF1F0RD0000000007", Annee = 2013, DateAchat = new DateOnly(2022, 4, 7), PrixAchat = 10990m, FinitionId = finitions.Single(f => f.Nom=="SEL").Id, EnVente = false }
                     };
                 context.Voitures.AddRange(voitures);
                 context.SaveChanges();

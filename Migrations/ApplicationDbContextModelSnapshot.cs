@@ -359,10 +359,10 @@ namespace Net_P5.Migrations
                     b.Property<int>("FinitionId")
                         .HasColumnType("int");
 
-                    b.Property<int>("MarqueId")
+                    b.Property<int?>("MarqueId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ModeleId")
+                    b.Property<int?>("ModeleId")
                         .HasColumnType("int");
 
                     b.Property<string>("PhotoUrl")
@@ -370,10 +370,6 @@ namespace Net_P5.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<decimal>("PrixAchat")
-                        .HasPrecision(12, 2)
-                        .HasColumnType("decimal(12,2)");
-
-                    b.Property<decimal>("PrixVente")
                         .HasPrecision(12, 2)
                         .HasColumnType("decimal(12,2)");
 
@@ -491,23 +487,15 @@ namespace Net_P5.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Net_P5.Models.Marque", "Marque")
+                    b.HasOne("Net_P5.Models.Marque", null)
                         .WithMany("Voitures")
-                        .HasForeignKey("MarqueId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("MarqueId");
 
-                    b.HasOne("Net_P5.Models.Modele", "Modele")
+                    b.HasOne("Net_P5.Models.Modele", null)
                         .WithMany("Voitures")
-                        .HasForeignKey("ModeleId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("ModeleId");
 
                     b.Navigation("Finition");
-
-                    b.Navigation("Marque");
-
-                    b.Navigation("Modele");
                 });
 
             modelBuilder.Entity("Net_P5.Models.Finition", b =>

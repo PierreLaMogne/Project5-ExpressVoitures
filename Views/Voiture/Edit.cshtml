@@ -22,11 +22,6 @@
                     <span asp-validation-for="CodeVIN" class="text-danger"></span>
                 </div>
                 <div class="mb-3">
-                    <label asp-for="PrixVente" class="form-label">Prix de vente</label>
-                    <input asp-for="PrixVente" class="form-control border-dark">
-                    <span asp-validation-for="PrixVente" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
                     <label asp-for="Annee" class="form-label">Année</label>
                     <input asp-for="Annee" class="form-control border-dark">
                     <span asp-validation-for="Annee" class="text-danger"></span>
@@ -64,6 +59,51 @@
                     </select>
                     <span asp-validation-for="FinitionId" class="text-danger"></span>
                 </div>
+                <div class="mb-3">
+                    <label asp-for="PrixAchat" class="form-label">Prix d'achat</label>
+                    <input asp-for="PrixAchat" class="form-control border-dark">
+                    <span asp-validation-for="PrixAchat" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="DateAchat" class="form-label">Date d'achat'</label>
+                    <input asp-for="DateAchat" type="date" min="1990-01-01" max="@DateTime.Today.AddYears(1).ToString("yyyy-MM-dd")" class="form-control border-dark">
+                    <span asp-validation-for="DateAchat" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label me-1">Mettre le véhicule en vente ?</label>
+                    <div class="form-check form-check-inline">
+                        <input asp-for="EnVente" type="radio" value="true" class="form-check-input" id="enVenteOui" />
+                        <label class="formlabel" for="enVenteOui">Oui</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input asp-for="EnVente" type="radio" value="false" class="form-check-input" id="enVenteNon" />
+                        <label class="formlabel" for="enVenteNon">Non</label>
+                    </div>
+                    <span asp-validation-for="EnVente" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Detail" class="form-label">Détail des réparations</label>
+                    <input asp-for="Detail" class="form-control border-dark">
+                    <span asp-validation-for="Detail" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Cout" class="form-label">Coût des réparations</label>
+                    <input asp-for="Cout" class="form-control border-dark">
+                    <span asp-validation-for="Cout" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="DateDisponibilite" class="form-label">Date de disponibilité</label>
+                    <input asp-for="DateDisponibilite" type="date" min="1990-01-01" max="@DateTime.Today.AddYears(1).ToString("yyyy-MM-dd")" class="form-control border-dark">
+                    <span asp-validation-for="DateDisponibilite" class="text-danger"></span>
+                </div>
+                @if(Model.DateVente.HasValue)
+                {
+                    <div class="mb-3">
+                        <label asp-for="DateVente" class="form-label">Date de vente</label>
+                        <input asp-for="DateVente" type="date" min="1990-01-01" max="@DateTime.Today.AddYears(1).ToString("yyyy-MM-dd")" class="form-control border-dark">
+                        <span asp-validation-for="DateVente" class="text-danger"></span>
+                    </div>
+                }
                 <div class="mb-3">
                     <label asp-for="Photo" class="form-label mb-2">Photo de la voiture</label>
                     <div class="border border-dark rounded p-3">
