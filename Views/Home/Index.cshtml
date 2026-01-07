@@ -14,15 +14,12 @@
             }
         </div>
     </div>
-    <div class="row row-cols-1 row-cols-lg-2 g-4" role="list" aria-label="Liste des voitures disponibles">
+    <div class="row row-cols-1 row-cols-lg-2 g-4 mb-5" role="list" aria-label="Liste des voitures disponibles">
         @foreach (var item in Model)
         {
             <div class="col" role="listitem">
-                <a asp-controller="Home" 
-                   asp-action="Details" 
-                   asp-route-id="@item.CodeVIN" 
-                   class="text-decoration-none"
-                   aria-label="Voir les détails de @item.Finition?.Modele?.Marque?.Nom @item.Finition?.Modele?.Nom @item.Finition?.Nom de @item.Annee à @item.PrixVente.ToString("C2")">
+                <a asp-controller="Home"    asp-action="Details" asp-route-id="@item.CodeVIN" class="text-decoration-none card-link"
+                    aria-label="Voir les détails de @item.Finition?.Modele?.Marque?.Nom @item.Finition?.Modele?.Nom @item.Finition?.Nom de @item.Annee à @item.PrixVente.ToString("C2")">
                     <div class="card h-100 border-0 shadow-sm">
                         <div class="row g-0 d-flex align-items-center">
                             <div class="col-8">

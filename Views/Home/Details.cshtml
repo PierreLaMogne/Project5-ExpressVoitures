@@ -13,7 +13,7 @@
                 <div class="mb-4">
                     <a asp-action="Index" class="return-link text-decoration-none">← Retour</a>
                 </div>
-                <div class="row g-0">
+                <div class="row">
                     <div class="col-8">
                         @if (Model.PhotoUrl == null)
                         {
@@ -23,16 +23,19 @@
                         {
                             <img src="@Model.PhotoUrl" class="img-fluid rounded-start-3 rounded-end-1" alt="@Model.NomComplet" />
                         }
-                        </div>
-                        <div class="col-4">
-                            @if (User.IsInRole("Admin"))
-                            {
-                                <div class="text-normal ms-1 mb-5">
-                                    Vous avez publié cette annonce, vous pouvez la :
-                                    <a class="btn btn-modifier" asp-controller="Voiture" asp-action="Edit" asp-route-id="@Model.CodeVIN">Modifier</a>
-                                    <a class="btn btn-supprimer" data-bs-toggle="modal" data-bs-target="#ConfirmerSuppression">Supprimer</a>
-                                </div>
-                            }
+                    </div>
+                    <div class="col-4">
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <div class="text-normal mb-5">
+                                Vous avez publié cette annonce, vous pouvez la :
+                                <a class="btn btn-modifier" asp-controller="Voiture" asp-action="Edit" asp-route-id="@Model.CodeVIN" role="button" aria-label="Modifier ce véhicule">Modifier</a>
+                                <a class="btn btn-supprimer" href="#" data-bs-toggle="modal" data-bs-target="#ConfirmerSuppression" role="button"
+                                    aria-label="Supprimer ce véhicule (ouvre confirmation)" aria-haspopup="dialog" aria-expanded="false" aria-controls="ConfirmerSuppression">
+                                    Supprimer
+                                </a>
+                            </div>
+
                             <div class="modal fade" id="ConfirmerSuppression" tabindex="-1" aria-labelledby="ModalSuppression" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
@@ -50,6 +53,8 @@
                                     </div>
                                 </div>
                             </div>
+
+                        }
                         <div class="card-body align-content-center">
                             <p class="card-title fw-bold mb-5">@Model.PrixVente.ToString("C2")</p>
                             <p class="card-text mb-4">@Model.Annee</p>
