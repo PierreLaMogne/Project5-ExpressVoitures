@@ -44,7 +44,7 @@
                             </div>
                             <div class="col-4">
                                 <div class="card-body p-1">
-                                    <h2 class="card-title mb-2 h5" aria-label="Prix">@item.PrixVente.ToString("C2")</h2>
+                                    <div class="card-title mb-3" aria-label="Prix">@item.PrixVente.ToString("C2")</div>
                                     <ul class="list-unstyled mb-0">
                                         <li class="card-text mb-1">
                                             <span class="visually-hidden">Année :</span>
@@ -58,9 +58,13 @@
                                             <span class="visually-hidden">Modèle :</span>
                                             @item.Finition?.Modele?.Nom
                                         </li>
-                                        <li class="card-text mb-1">
+                                        <li class="card-text mb-3">
                                             <span class="visually-hidden">Finition :</span>
                                             @item.Finition?.Nom
+                                        </li>
+                                        <li class="card-text fst-italic mb-1">
+                                            <span class="visually-hidden">Statut :</span>
+                                            @item.Statut
                                         </li>
                                     </ul>
                                 </div>
