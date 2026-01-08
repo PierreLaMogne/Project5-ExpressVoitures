@@ -8,14 +8,11 @@
     @if (SignInManager.IsSignedIn(User))
     {
         <li class="nav-item">
-            <a class="nav-link text-dark"
-               asp-area="Identity"
-               asp-page="/Account/Logout"
-               asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                Se déconnecter
-            </a>
-
-        </li>       
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout"
+                  asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button type="submit" class="nav-link text-dark">Se déconnecter</button>
+            </form>
+        </li>
     }
     else
     {
