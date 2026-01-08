@@ -1,5 +1,4 @@
-﻿using Humanizer.Localisation;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Net_P5.Data;
@@ -17,6 +16,7 @@ namespace Net_P5.Controllers
             _context = context;
             _env = env;
         }
+
         [HttpGet]
         public async Task<IActionResult> Create()
         {
@@ -174,7 +174,7 @@ namespace Net_P5.Controllers
             _context.Voitures.Add(voiture);
             await _context.SaveChangesAsync();
 
-            ViewBag.NomCree = @$"{voiture.NomComplet}";
+            TempData["Message"] = voiture.NomComplet;
 
             return RedirectToAction(nameof(CreateConfirmation));
         }
@@ -405,9 +405,15 @@ namespace Net_P5.Controllers
                 .Include(v => v.Finition.Modele.Marque)
                 .FirstOrDefaultAsync(v => v.CodeVIN == model.CodeVIN);
 
-            ViewBag.NomModifie = @$"{voitureReloaded!.NomComplet}";
+            TempData["Message"] = voitureReloaded!.NomComplet;
 
-            return View("EditConfirmation");
+            return RedirectToAction(nameof(EditConfirmation));
+        }
+
+        [HttpGet]
+        public IActionResult EditConfirmation()
+        {
+            return View();
         }
 
         [HttpGet]
@@ -451,11 +457,17 @@ namespace Net_P5.Controllers
                 }
             }
 
-            ViewBag.NomSupprime = voiture.NomComplet;
+            TempData["Message"] = voiture.NomComplet;
 
             _context.Voitures.Remove(voiture);
             await _context.SaveChangesAsync();
-            return View("DeleteConfirmation");
+            return RedirectToAction(nameof(DeleteConfirmation));
+        }
+
+        [HttpGet]
+        public IActionResult DeleteConfirmation()
+        {
+            return View();
         }
 
         //Remplissage des champs Select

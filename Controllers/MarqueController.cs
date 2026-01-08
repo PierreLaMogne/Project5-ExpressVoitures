@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Net_P5.Data;
 using Net_P5.Models;
 
 namespace Net_P5.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class MarqueController : Controller
-        {
+    {
         private readonly ApplicationDbContext _context;
         public MarqueController(ApplicationDbContext context)
         {
@@ -14,80 +16,113 @@ namespace Net_P5.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Create()
         {
-            var marque = await _context.Marques
-                .Include(m => m.Modeles)
-                    .ThenInclude(mo => mo.Finitions)
-                .ToListAsync();
-            return View(marque);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Details(int id)
-        {
-            var marque = await _context.Marques.FindAsync(id);
-            if (marque == null)
-            {
-                return NotFound();
-            }
-            return View(marque);
-        }
-
-        [HttpGet]
-        public IActionResult Create()
-        {
-            return View();
+            var model = new VoitureViewModel();
+            await PopulateDropdowns();
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Marque marque)
+        public async Task<IActionResult> Create (VoitureViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Marques.Add(marque);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
+                await PopulateDropdowns();
+                return View(model);
             }
-            return View(marque);
+
+            var marque = new Marque
+            {
+                Nom = model.MarqueNom
+            };
+            _context.Marques.Add(marque);
+            await _context.SaveChangesAsync();
+
+            TempData["Message"] = marque.Nom;
+
+            return RedirectToAction(nameof(CreateConfirmation));
+        }
+
+        [HttpGet]
+        public IActionResult CreateConfirmation()
+        {
+            return View();
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var marque = await _context.Marques.FindAsync(id);
-            if (marque == null)
+            if (id != _context.Marques.FirstOrDefault(v => v.Id == id)?.Id)
             {
-                return NotFound();
+                return BadRequest();
             }
-            return View(marque);
+
+            var marque = await _context.Marques.FirstOrDefaultAsync(v => v.Id == id);
+
+            if (marque == null)
+                return NotFound();
+
+            var viewModel = new VoitureViewModel
+            {
+                MarqueId = marque.Id,
+                MarqueNom = marque.Nom
+            };
+
+            await PopulateDropdowns();
+            return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Marque marque)
+        public async Task<IActionResult> Edit(VoitureViewModel model)
         {
-            if (id != marque.Id) return BadRequest();
+            //Vérification du format des données
+            if (!ModelState.IsValid)
+            {
+                ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
+                await PopulateDropdowns();
+                return View(model);
+            }
 
-            var existingMarque = await _context.Marques.FindAsync(id);
-            if (existingMarque == null)
+            //Récupération de la marque existante
+            var marque = await _context.Marques.FirstOrDefaultAsync(v => v.Id == model.MarqueId);
+            if (marque == null)
             {
                 return NotFound();
             }
-            if (ModelState.IsValid)
-            {
-                existingMarque.Nom = marque.Nom;
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
-            }
-            return View(marque);
+
+            //Mise à jour des propriétés de la marque
+            marque.Nom = model.MarqueNom;
+                      
+            //Enregistrement des modifications et redirection
+            _context.Marques.Update(marque);
+            await _context.SaveChangesAsync();
+
+            // Recharger complètement l'entité avec ses nouvelles propriétés de navigation
+            var marqueReloaded = await _context.Marques.FirstOrDefaultAsync(m => m.Id == model.MarqueId);
+
+            TempData["Message"] = marqueReloaded!.Nom;
+
+            return RedirectToAction(nameof(EditConfirmation));
         }
 
         [HttpGet]
+        public IActionResult EditConfirmation()
+        {
+            return View();
+        }
+        
+        [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            var marque = await _context.Marques.FindAsync(id);
+            if (id != _context.Marques.FirstOrDefault(m => m.Id == id)?.Id)
+            {
+                return BadRequest();
+            }
+
+            var marque = await _context.Marques.FirstOrDefaultAsync(m => m.Id == id);
             if (marque == null)
             {
                 return NotFound();
@@ -100,14 +135,45 @@ namespace Net_P5.Controllers
         [ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var marque = await _context.Marques.FindAsync(id);
+            if (id != _context.Marques.FirstOrDefault(m => m.Id == id)?.Id)
+            {
+                return BadRequest();
+            }
+
+            var marque = await _context.Marques.FirstOrDefaultAsync(m => m.Id == id);
             if (marque == null)
             {
                 return NotFound();
             }
+
+            TempData["Message"] = marque.Nom;
+
             _context.Marques.Remove(marque);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(DeleteConfirmation));
         }
+
+        [HttpGet]
+        public IActionResult DeleteConfirmation()
+        {
+            return View();
+        }
+
+
+
+
+
+
+
+
+
+        //Remplissage des champs Select
+        public async Task PopulateDropdowns()
+        {
+            ViewBag.Marques = await _context.Marques.ToListAsync();
+            ViewBag.Modeles = await _context.Modeles.ToListAsync();
+            ViewBag.Finitions = await _context.Finitions.ToListAsync();
+        }
+
     }
 }

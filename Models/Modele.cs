@@ -13,6 +13,10 @@ namespace Net_P5.Models
         [Display(Name = "Nom du modèle")]
         public string Nom { get; set; } = string.Empty;
 
+        //Propriétés calculées
+        [NotMapped]
+        public string NomComplet => $"{Marque.Nom} {Nom}";
+
         //Clé étrangère
 
         [ForeignKey(nameof(MarqueId))]
@@ -21,6 +25,5 @@ namespace Net_P5.Models
 
         //Collections de navigation
         public virtual ICollection<Finition> Finitions { get; set; } = new List<Finition>();
-        public virtual ICollection<Voiture> Voitures { get; set; } = new List<Voiture>();
     }
 }
