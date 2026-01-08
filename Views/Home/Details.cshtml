@@ -53,14 +53,64 @@
                                     </div>
                                 </div>
                             </div>
-
                         }
+
+                        @{
+                            var reparation = Model.Reparations.FirstOrDefault();
+                            var vente = Model.Ventes.FirstOrDefault();
+                        }
+
                         <div class="card-body align-content-center">
-                            <p class="card-title fw-bold mb-5">@Model.PrixVente.ToString("C2")</p>
-                            <p class="card-text mb-4">@Model.Annee</p>
-                            <p class="card-text mb-4">@Model.Finition.Modele.Marque.Nom</p>
-                            <p class="card-text mb-4">@Model.Finition.Modele.Nom</p>
-                            <p class="card-text mb-4">@Model.Finition.Nom</p>
+                            <div class="card-title detail-item">
+                                Prix de vente :
+                                <div class="mt-2">@Model.PrixVente.ToString("C2")</div>
+                                <div class="fst-italic mt-3">@Model.Statut</div>
+                            </div>
+                            <div class="card-text mt-5">
+                                <strong>Année de fabrication :</strong>
+                                <div>
+                                    @Model.Annee
+                                </div>
+                            </div>
+                            <div class="card-text mt-3">
+                                <strong>Marque :</strong>
+                                <div>
+                                    @Model.Finition.Modele.Marque.Nom
+                                </div>
+                            </div>
+                            <div class="card-text mt-3">
+                                <strong>Modèle :</strong>
+                                <div>
+                                    @Model.Finition.Modele.Nom
+                                </div>
+                            </div>
+                            <div class="card-text mt-3">
+                                <strong>Finition :</strong>
+                                <div>
+                                    @Model.Finition.Nom
+                                </div>
+                            </div>
+                            <div class="card-text mt-3">
+                                <strong>Détail des réparations :</strong>
+                                <div>           
+                                    @reparation!.Detail
+                                </div>
+                            </div>
+                            <div class="card-text mt-3">
+                                <strong>Date de disponibilité :</strong>
+                                <div>
+                                    @reparation!.DateDisponibilite
+                                </div>
+                            </div>
+                            @if(vente != null)
+                            {
+                                <div class="card-text mt-3">
+                                    <strong>Date de vente :</strong>
+                                    <div>
+                                        @vente.DateVente
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
