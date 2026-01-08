@@ -139,14 +139,23 @@
                     <input asp-for="DateDisponibilite" type="date" min="1990-01-01" max="@DateTime.Today.AddYears(1).ToString("yyyy-MM-dd")" class="form-control border-dark">
                     <span asp-validation-for="DateDisponibilite" class="text-danger"></span>
                 </div>
-                @if(Model.DateVente.HasValue)
-                {
-                    <div class="mb-3">
-                        <label asp-for="DateVente" class="form-label">Date de vente</label>
-                        <input asp-for="DateVente" type="date" min="1990-01-01" max="@DateTime.Today.AddYears(1).ToString("yyyy-MM-dd")" class="form-control border-dark">
-                        <span asp-validation-for="DateVente" class="text-danger"></span>
+                <div class="mb-3">
+                    <label class="form-label me-2">Le véhicule a-t-il été vendu ?</label>
+                    <div class="form-check form-check-inline">
+                        <input asp-for="VoitureVendue" type="radio" value="true" class="form-check-input" id="voitureVendueOui" />
+                        <label class="formlabel" for="voitureVendueOui">Oui</label>
                     </div>
-                }
+                    <div class="form-check form-check-inline">
+                        <input asp-for="VoitureVendue" type="radio" value="false" class="form-check-input" id="voitureVendueNon" />
+                        <label class="formlabel" for="voitureVendueNon">Non</label>
+                    </div>
+                    <span asp-validation-for="VoitureVendue" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="DateVente" class="form-label">Date de vente</label>
+                    <input asp-for="DateVente" type="date" min="1990-01-01" max="@DateTime.Today.AddYears(1).ToString("yyyy-MM-dd")" class="form-control border-dark">
+                    <span asp-validation-for="DateVente" class="text-danger"></span>
+                </div>
                 <div class="mb-3">
                     <label asp-for="Photo" class="form-label mb-2">Photo de la voiture</label>
                     <div class="border border-dark rounded p-3">

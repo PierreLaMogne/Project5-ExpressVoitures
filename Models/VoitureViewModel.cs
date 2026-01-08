@@ -33,12 +33,15 @@ namespace Net_P5.Models
         //Données du type de véhicule
         [Required(ErrorMessage = "La marque du véhicule est obligatoire")]
         public int MarqueId { get; set; }
+        public string MarqueNom { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Le modèle du véhicule est obligatoire")]
         public int ModeleId { get; set; }
+        public string ModeleNom { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "La finition du véhicule est obligatoire")]
         public int FinitionId { get; set; }
+        public string FinitionNom { get; set; } = string.Empty;
 
 
         //Données des réparations
@@ -54,11 +57,14 @@ namespace Net_P5.Models
         [Required(ErrorMessage = "La date de disponibilité est obligatoire.")]
         public DateOnly DateDisponibilite { get; set; }
 
+        //Données de la vente
+        public bool VoitureVendue { get; set; }
+        public DateOnly? DateVente { get; set; }
 
-        //Données non obligatoires
+
+        //Données de la photo
         public IFormFile? Photo { get; set; }
         public string? PhotoUrl { get; set; }
-        public DateOnly? DateVente { get; set; }
 
     }
 }

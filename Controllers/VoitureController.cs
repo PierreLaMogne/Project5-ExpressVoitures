@@ -20,8 +20,14 @@ namespace Net_P5.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
+            var model = new VoitureViewModel
+            {
+                DateAchat = DateOnly.FromDateTime(DateTime.Now),
+                DateDisponibilite = DateOnly.FromDateTime(DateTime.Now),
+            };
+
             await PopulateDropdowns();
-            return View(new VoitureViewModel());
+            return View(model);
         }
 
         [HttpPost]
@@ -67,9 +73,29 @@ namespace Net_P5.Controllers
             }
 
             //Vérification des dates
+            if (model.VoitureVendue == true && !model.DateVente.HasValue)
+            {
+                ModelState.AddModelError("DateVente", "La date de vente est requise si la voiture est vendue");
+                ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
+                await PopulateDropdowns();
+                return View(model);
+            }
+
+            if (model.DateVente.HasValue && model.VoitureVendue == true)
+            {
+                if (model.DateVente < model.DateDisponibilite)
+                {
+                    ModelState.AddModelError("DateVente", "La date de vente est antérieure à la date de disponibilité");
+                    ModelState.AddModelError("DateDisponibilite", "La date de disponibilité est postérieure à la date de vente");
+                    ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
+                    await PopulateDropdowns();
+                    return View(model);
+                }
+            }
+
             if (model.DateDisponibilite < model.DateAchat)
             {
-                ModelState.AddModelError("DateDisponibilite", "La date de disponibilité est antérieure à la date d'achat'");
+                ModelState.AddModelError("DateDisponibilite", "La date de disponibilité est antérieure à la date d'achat");
                 ModelState.AddModelError("DateAchat", "La date d'achat est postérieure à la date de disponibilité");
                 ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
                 await PopulateDropdowns();
@@ -117,6 +143,17 @@ namespace Net_P5.Controllers
                 Cout = model.Cout,
                 DateDisponibilite = model.DateDisponibilite
             };
+            voiture.Reparations = new List<Reparation> { reparation };
+
+            //Création de la vente si applicable
+            if (model.DateVente.HasValue && model.VoitureVendue == true)
+            {
+                var vente = new Vente
+                {
+                    DateVente = model.DateVente.Value
+                };
+                voiture.Ventes = new List<Vente> { vente };
+            }
 
             //Création de la photo
             if (Photo != null && Photo.Length > 0)
@@ -240,7 +277,15 @@ namespace Net_P5.Controllers
             }
 
             //Vérification des dates
-            if(model.DateVente.HasValue)
+            if (model.VoitureVendue == true && !model.DateVente.HasValue)
+            {
+                ModelState.AddModelError("DateVente", "La date de vente est requise si la voiture est vendue");
+                ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
+                await PopulateDropdowns();
+                return View(model);
+            }
+
+            if (model.DateVente.HasValue && model.VoitureVendue == true)
             {
                 if(model.DateVente < model.DateDisponibilite)
                 {
@@ -252,9 +297,9 @@ namespace Net_P5.Controllers
                 }
             }
 
-            if(model.DateDisponibilite < model.DateAchat)
+            if (model.DateDisponibilite < model.DateAchat)
             {
-                ModelState.AddModelError("DateDisponibilite", "La date de disponibilité est antérieure à la date d'achat'");
+                ModelState.AddModelError("DateDisponibilite", "La date de disponibilité est antérieure à la date d'achat");
                 ModelState.AddModelError("DateAchat", "La date d'achat est postérieure à la date de disponibilité");
                 ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
                 await PopulateDropdowns();
@@ -326,15 +371,29 @@ namespace Net_P5.Controllers
                 reparation.DateDisponibilite = model.DateDisponibilite;
             }
 
-            //Mise à jour des ventes associées si nécessaire
+            //Mise à jour ou création des ventes associées si nécessaire
             var vente = await _context.Ventes
                 .Where(v => v.VoitureCodeVIN == voiture.CodeVIN)
                 .OrderByDescending(v => v.DateVente)
                 .FirstOrDefaultAsync();
 
-            if (vente != null && model.DateVente.HasValue)
+            if (vente == null && model.DateVente.HasValue && model.VoitureVendue == true)
+            {
+                var venteCreee = new Vente
+                {
+                    DateVente = model.DateVente.Value
+                };
+                voiture.Ventes = new List<Vente> { venteCreee };
+            }
+
+            if (vente != null && model.DateVente.HasValue && model.VoitureVendue == true)
             {
                 vente.DateVente = model.DateVente.Value;
+            }
+
+            if (vente != null && model.VoitureVendue == false)
+            {
+                _context.Ventes.Remove(vente);
             }
 
             //Enregistrement des modifications et redirection
