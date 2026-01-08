@@ -14,7 +14,7 @@
                     <a asp-action="Index" class="return-link text-decoration-none">← Retour</a>
                 </div>
                 <div class="row mb-5">
-                    <div class="col-8">
+                    <div class="col-12 col-lg-8">
                         @if (Model.PhotoUrl == null)
                         {
                             <img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/Fiat500-pot-de-yaourt-av-byRundvald.jpg" class="img-fluid rounded-start-3 rounded-end-1" alt="@Model.NomComplet" />
@@ -24,7 +24,7 @@
                             <img src="@Model.PhotoUrl" class="img-fluid rounded-start-3 rounded-end-1" alt="@Model.NomComplet" />
                         }
                     </div>
-                    <div class="col-4">
+                    <div class="col-12 col-lg-4">
                         @if (User.IsInRole("Admin"))
                         {
                             <div class="text-normal mb-5">
