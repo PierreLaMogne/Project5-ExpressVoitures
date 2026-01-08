@@ -1,5 +1,6 @@
 ﻿@model VoitureViewModel
 @using Net_P5.Data
+@using Net_P5.ViewModels
 @inject ApplicationDbContext DbContext
 @using Microsoft.EntityFrameworkCore
 
@@ -26,11 +27,13 @@
                     <input asp-for="Annee" class="form-control border-dark">
                     <span asp-validation-for="Annee" class="text-danger"></span>
                 </div>
-                
+
+
                 <div class="mb-3">
                     <label class="form-label">Marque</label>
                     <div class="d-flex flex-column flex-lg-row">
-                        <select asp-for="MarqueId" class="form-select border-dark mb-2 mb-md-0 flex-md-grow-1" required style="border-top-right-radius: 0.375rem; border-bottom-right-radius: 0.375rem;">
+                        <select asp-for="MarqueId" class="form-select border-dark mb-2 mb-md-0 flex-md-grow-1" required 
+                            style="border-top-right-radius: 0.375rem; border-bottom-right-radius: 0.375rem;">
                             <option value="" disabled selected>Sélectionnez une marque</option>
                             @foreach (var marque in ViewBag.Marques)
                             {
@@ -38,24 +41,24 @@
                             }
                         </select>
                         <div class="btn-group dropend" role="group">
-                            <button class="btn btn-primary dropdown-toggle p-2 w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 170px;">
+                            <button class="btn btn-primary dropdown-toggle p-2 w-100" type="button" data-bs-toggle="dropdown" 
+                                aria-expanded="false" style="min-width: 170px;">
                                 Gérer les marques
                             </button>
                             <ul class="dropdown-menu">
                                 <a asp-controller="Marque" asp-action="Create" class="dropdown-item">Créer une marque</a>
-                                <a asp-controller="Marque" asp-action="Edit" class="dropdown-item">Modifier une marque</a>
-                                <a asp-controller="Marque" asp-action="Delete" class="dropdown-item">Supprimer une marque</a>
-                            </ul>       
+                                <a asp-controller="Marque" asp-action="Index" class="dropdown-item">Modifier ou supprimer une marque</a>
+                            </ul>
                         </div>
                     </div>
                     <span asp-validation-for="MarqueId" class="text-danger"></span>
                 </div>
                 
-
                 <div class="mb-3">
                     <label class="form-label">Modèle</label>
                     <div class="d-flex flex-column flex-lg-row">
-                        <select asp-for="ModeleId" class="form-select border-dark mb-2 mb-md-0 flex-md-grow-1" required style="border-top-right-radius: 0.375rem; border-bottom-right-radius: 0.375rem;">
+                        <select asp-for="ModeleId" class="form-select border-dark mb-2 mb-md-0 flex-md-grow-1" required
+                            style="border-top-right-radius: 0.375rem; border-bottom-right-radius: 0.375rem;">
                             <option value="" disabled selected>Sélectionnez un modèle</option>
                             @foreach (var modele in ViewBag.Modeles)
                             {
@@ -63,20 +66,19 @@
                             }
                         </select>
                         <div class="btn-group dropend" role="group">
-                            <button class="btn btn-primary dropdown-toggle p-2 w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 170px;">
+                            <button class="btn btn-primary dropdown-toggle p-2 w-100" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false" style="min-width: 170px;">
                                 Gérer les modèles
                             </button>
                             <ul class="dropdown-menu">
                                 <a asp-controller="Modele" asp-action="Create" class="dropdown-item">Créer un modèle</a>
-                                <a asp-controller="Modele" asp-action="Edit" class="dropdown-item">Modifier un modèle</a>
-                                <a asp-controller="Modele" asp-action="Delete" class="dropdown-item">Supprimer un modèle</a>
+                                <a asp-controller="Modele" asp-action="Index" class="dropdown-item">Modifier ou supprimer un modèle</a>
                             </ul>
                         </div>
                     </div>
                     <span asp-validation-for="ModeleId" class="text-danger"></span>
                 </div>
                 
-
                 <div class="mb-3">
                     <label class="form-label">Finition</label>
                     <div class="d-flex flex-column flex-lg-row">
@@ -93,8 +95,7 @@
                             </button>
                             <ul class="dropdown-menu">
                                 <a asp-controller="Finition" asp-action="Create" class="dropdown-item">Créer une finition</a>
-                                <a asp-controller="Finition" asp-action="Edit" class="dropdown-item">Modifier une finition</a>
-                                <a asp-controller="Finition" asp-action="Delete" class="dropdown-item">Supprimer une finition</a>
+                                <a asp-controller="Finition" asp-action="Index" class="dropdown-item">Modifier ou supprimer une finition</a>
                             </ul>
                         </div>
                     </div>
@@ -192,8 +193,9 @@
     </div>
 </div>
 
-<!--Affichage de la photo uploadée-->
+
 @section Scripts {
+    <!--Affichage de la photo uploadée-->
     <script>
         document.getElementById('photoInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
@@ -216,6 +218,32 @@
                 };
                 reader.readAsDataURL(file);
             }
+        });
+    </script>
+
+    <!--Récupération du label select pour les asp-route-id des dropdowns-->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.manage-btn').forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const fieldName = this.dataset.field;
+                    const select = document.querySelector(`select[asp-for="${fieldName}"]`);
+                    const idValue = select ? select.value : null;
+
+                    if (!idValue) {
+                        alert(`Veuillez sélectionner une ${fieldName.replace('Id', '').toLowerCase()} d'abord.`);
+                        return;
+                    }
+
+                    const controller = this.dataset.controller;
+                    const action = this.dataset.action || 'Edit';
+
+                    window.location.href = `/${controller}/${action}?id=${idValue}`;
+                });
+            });
         });
     </script>
 }

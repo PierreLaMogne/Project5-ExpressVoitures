@@ -1,5 +1,6 @@
 ﻿@model VoitureViewModel
 @using Net_P5.Data
+@using Net_P5.ViewModels
 @inject ApplicationDbContext DbContext
 @using Microsoft.EntityFrameworkCore
 
@@ -44,8 +45,7 @@
                             </button>
                             <ul class="dropdown-menu">
                                 <a asp-controller="Marque" asp-action="Create" class="dropdown-item">Créer une marque</a>
-                                <a asp-controller="Marque" asp-action="Edit" class="dropdown-item">Modifier une marque</a>
-                                <a asp-controller="Marque" asp-action="Delete" class="dropdown-item">Supprimer une marque</a>
+                                <a asp-controller="Marque" asp-action="Index" class="dropdown-item">Modifier ou supprimer une marque</a>
                             </ul>
                         </div>
                     </div>
@@ -69,8 +69,7 @@
                             </button>
                             <ul class="dropdown-menu">
                                 <a asp-controller="Modele" asp-action="Create" class="dropdown-item">Créer un modèle</a>
-                                <a asp-controller="Modele" asp-action="Edit" class="dropdown-item">Modifier un modèle</a>
-                                <a asp-controller="Modele" asp-action="Delete" class="dropdown-item">Supprimer un modèle</a>
+                                <a asp-controller="Modele" asp-action="Index" class="dropdown-item">Modifier ou supprimer un modèle</a>
                             </ul>
                         </div>
                     </div>
@@ -94,8 +93,7 @@
                             </button>
                             <ul class="dropdown-menu">
                                 <a asp-controller="Finition" asp-action="Create" class="dropdown-item">Créer une finition</a>
-                                <a asp-controller="Finition" asp-action="Edit" class="dropdown-item">Modifier une finition</a>
-                                <a asp-controller="Finition" asp-action="Delete" class="dropdown-item">Supprimer une finition</a>
+                                <a asp-controller="Finition" asp-action="Index" class="dropdown-item">Modifier ou supprimer une finition</a>
                             </ul>
                         </div>
                     </div>

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Net_P5.Data;
-using Net_P5.Models;
+using Net_P5.ViewModels;
 using System.Diagnostics;
 
 namespace Net_P5.Controllers

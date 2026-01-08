@@ -3,7 +3,7 @@ using Net_P5.Attributes;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Net_P5.Models
+namespace Net_P5.ViewModels
 {
     public class VoitureViewModel
     {

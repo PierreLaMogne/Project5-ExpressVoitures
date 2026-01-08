@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Net_P5.Data;
 using Net_P5.Models;
+using Net_P5.ViewModels;
 
 namespace Net_P5.Controllers
 {
@@ -16,16 +17,23 @@ namespace Net_P5.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            await PopulateDropdowns();
+            return View();
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var model = new VoitureViewModel();
+            var model = new ModeleViewModel();
             await PopulateDropdowns();
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(VoitureViewModel model)
+        public async Task<IActionResult> Create(ModeleViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -33,16 +41,21 @@ namespace Net_P5.Controllers
                 return View(model);
             }
 
-            var modele = new Modele
+            var modelee = new Modele
             {
                 Nom = model.ModeleNom,
                 MarqueId = model.MarqueId
             };
 
-            _context.Modeles.Add(modele);
+            _context.Modeles.Add(modelee);
             await _context.SaveChangesAsync();
 
-            TempData["Message"] = modele.NomComplet;
+            // Charger le modèle pour l'affichage TempData
+            var modeleReloaded = await _context.Modeles
+                .Include(m => m.Marque)
+                .FirstOrDefaultAsync(m => m.Id == modelee.Id);
+
+            TempData["Message"] = modeleReloaded!.NomComplet;
 
             return RedirectToAction(nameof(CreateConfirmation));
         }
@@ -68,7 +81,7 @@ namespace Net_P5.Controllers
             if (modele == null)
                 return NotFound();
 
-            var viewModel = new VoitureViewModel
+            var viewModel = new ModeleViewModel
             {
                 ModeleId = modele.Id,
                 ModeleNom = modele.Nom,
@@ -82,9 +95,15 @@ namespace Net_P5.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(VoitureViewModel model)
+        public async Task<IActionResult> Edit(int id, ModeleViewModel model)
         {
-            //Vérification du format des données
+            // Vérifier que l'ID de la route correspond à l'ID du modèle
+            if (id != model.ModeleId)
+            {
+                return BadRequest("L'ID de la route ne correspond pas à l'ID du modèle.");
+            }
+
+            // Vérification du format des données
             if (!ModelState.IsValid)
             {
                 ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
@@ -92,25 +111,27 @@ namespace Net_P5.Controllers
                 return View(model);
             }
 
-            //Récupération du modèle existant
+            // Récupération du modèle existant (utiliser l'id validé)
             var modele = await _context.Modeles
                 .Include(mo => mo.Marque)
-                .FirstOrDefaultAsync(mo => mo.Id == model.ModeleId);
+                .FirstOrDefaultAsync(mo => mo.Id == id);
             if (modele == null)
             {
                 return NotFound();
             }
 
-            //Mise à jour des propriétés du modèle
+            // Mise à jour des propriétés du modèle
             modele.Nom = model.ModeleNom;
             modele.MarqueId = model.MarqueId;
 
-            //Enregistrement des modifications et redirection
+            // Enregistrement des modifications et redirection
             _context.Modeles.Update(modele);
             await _context.SaveChangesAsync();
 
             // Recharger complètement l'entité avec ses nouvelles propriétés de navigation
-            var modeleReloaded = await _context.Modeles.FirstOrDefaultAsync(mo => mo.Id == model.ModeleId);
+            var modeleReloaded = await _context.Modeles
+                .Include(mo => mo.Marque)
+                .FirstOrDefaultAsync(mo => mo.Id == id);
 
             TempData["Message"] = modeleReloaded!.NomComplet;
 
@@ -123,7 +144,8 @@ namespace Net_P5.Controllers
             return View();
         }
 
-        [HttpGet]
+        //Non nécessaire car utilisation d'un modal
+        /*[HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
             if (id != _context.Modeles.FirstOrDefault(mo => mo.Id == id)?.Id)
@@ -131,13 +153,26 @@ namespace Net_P5.Controllers
                 return BadRequest();
             }
 
-            var modele = await _context.Modeles.FirstOrDefaultAsync(mo => mo.Id == id);
+            var modele = await _context.Modeles
+                .Include(mo => mo.Marque)
+                .FirstOrDefaultAsync(mo => mo.Id == id);
+                
             if (modele == null)
             {
                 return NotFound();
             }
-            return View(modele);
+            
+            var viewModel = new ModeleViewModel
+            {
+                ModeleId = modele.Id,
+                ModeleNom = modele.Nom,
+                MarqueId = modele.Marque.Id,
+                MarqueNom = modele.Marque.Nom
+            };
+            
+            return View(viewModel);
         }
+        */
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -149,17 +184,40 @@ namespace Net_P5.Controllers
                 return BadRequest();
             }
 
-            var modele = await _context.Modeles.FirstOrDefaultAsync(mo => mo.Id == id);
+            var modele = await _context.Modeles
+                .Include(mo => mo.Marque)
+                .FirstOrDefaultAsync(mo => mo.Id == id);
+                
             if (modele == null)
             {
                 return NotFound();
             }
 
-            TempData["Message"] = modele.NomComplet;
+            //Vérifier qu'aucune voiture n'utilise ce modèle avant de la supprimer
+            var count = await _context.Voitures
+                .Include(v => v.Finition)
+                    .ThenInclude(f => f.Modele)
+                        .ThenInclude(m => m.Marque)
+                .CountAsync(v => v.Finition.Modele.Id == id);
+            if (count > 0)
+            {
+                TempData["ErrorMessage"] = $"Impossible de supprimer ce modèle, {count} voiture(s) y sont associée(s).";
+                return RedirectToAction(nameof(Index));
+            }
 
-            _context.Modeles.Remove(modele);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(DeleteConfirmation));
+            TempData["Message"] = modele.Nom;
+
+            try
+            {
+                _context.Modeles.Remove(modele);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(DeleteConfirmation));
+            }
+            catch (DbUpdateException)
+            {
+                TempData["ErrorMessage"] = "Une erreur est survenue lors de la suppression du modèle. Veuillez réessayer.";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         [HttpGet]

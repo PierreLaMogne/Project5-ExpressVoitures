@@ -1,0 +1,123 @@
+﻿@using Net_P5.ViewModels
+@model MarqueViewModel
+@using Net_P5.Data
+
+
+@{
+    ViewData["Title"] = "Modifier ou supprimer une marque";
+}
+
+<div class="container">
+    <div class="row mb-5">
+        <div class="col-4 offset-4">
+            <div class="text-center mb-5">
+                <div class="titre mb-2">Modifier ou supprimer une marque</div>
+                <div class="soustitre">tous les champs sont obligatoires</div>
+            </div>
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+
+            <div class="mb-3">
+                <label class="form-label">Sélectionner une marque</label>
+                <div class="d-flex flex-column flex-lg-row">
+                    <select id="itemSelect" class="form-select border-dark mb-2 mb-md-0 flex-md-grow-1" required>
+                        <option value="" disabled selected>Sélectionner une marque</option>
+                        @foreach (var marque in ViewBag.Marques)
+                        {
+                            <option value="@marque.Id">@marque.Nom</option>
+                        }
+                    </select>
+                </div>
+                <span class="text-danger" id="validationItem"></span>
+            </div>
+            <input type="hidden" id="selectedId" value="" />
+            
+            <div class="d-flex justify-content-center gap-2 mb-3">
+                <a class="btn btn-modifier" href="#" role="button" data-bs-toggle="modal" data-bs-target="#ConfirmerModification" 
+                   aria-label="Modifier l'élément sélectionné" style="pointer-events: none; opacity: 0.6;" id="btnModifier">
+                    Modifier
+                </a>
+                <a class="btn btn-supprimer" href="#" role="button" data-bs-toggle="modal" data-bs-target="#ConfirmerSuppression"
+                   aria-label="Supprimer l'élément sélectionné" style="pointer-events: none; opacity: 0.6;" id="btnSupprimer">
+                    Supprimer
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="ConfirmerModification" tabindex="-1" aria-labelledby="ModalSuppression" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title fs-5" id="ModalSuppression">Indiquer les nouvelles informations</div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row d-flex justify-content-center">
+                    <form asp-controller="Marque" asp-action="Edit" asp-route-id="" method="post" id="formModification">
+                        <input type="hidden" asp-for="MarqueId" id="modalModificationId" />
+                        <div class="mb-3">
+                            <label asp-for="MarqueNom" class="form-label">Nouveau nom de la marque</label>
+                            <input asp-for="MarqueNom" class="form-control border-dark">
+                            <span asp-validation-for="MarqueNom" class="text-danger"></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Modifier</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ConfirmerSuppression" tabindex="-1" aria-labelledby="ModalSuppression" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title fs-5" id="ModalSuppression">Confirmer la suppression ?</div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row d-flex justify-content-center">
+                    <form asp-controller="Marque" asp-action="Delete" method="post">
+                        <input type="hidden" id="modalSupprId" name="Id" value="" />
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-primary">Oui, supprimer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Script pour récupérer la valeur SelectedId-->
+@section Scripts {
+    <script>
+        $(document).ready(function(){
+            $('#itemSelect').change(function(){
+                var selectedId = $(this).val();
+                if(selectedId){
+                    $('#validationItem').text('');
+                    $('#selectedId').val(selectedId);
+                    $('#btnModifier').css({'pointer-events': 'auto', 'opacity': '1'});
+                    $('#btnSupprimer').css({'pointer-events': 'auto', 'opacity': '1'});
+                    $('#modalModificationId').val(selectedId);  // ✓ Remplit le champ caché
+                    $('#formModification').attr('action', '/Marque/Edit/' + selectedId);  // ✓ Définit la route
+                    $('#modalSupprId').val(selectedId);
+                } else {
+                    $('#validationItem').text('Veuillez sélectionner une marque.');
+                    $('#selectedId').val('');
+                    $('#btnModifier').css({'pointer-events': 'none', 'opacity': '0.6'});
+                    $('#btnSupprimer').css({'pointer-events': 'none', 'opacity': '0.6'});
+                    $('#modalModificationId').val('');  // ✓ Réinitialiser
+                    $('#modalSupprId').val('');
+                }
+            });
+        });
+    </script>
+}
