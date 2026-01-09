@@ -6,7 +6,6 @@
 
 @{
     ViewData["Title"] = "Ajouter une voiture";
-    Layout = "~/Views/Shared/_LayoutCreate.cshtml";
 }
 
 <div class="container">
@@ -14,7 +13,7 @@
         <div class="col-4 offset-4">
             <div class="text-center mb-5"> 
                 <div class="titre mb-2">Ajouter une voiture</div>
-                <div class="soustitre">seuls la date de vente et la photo de la voiture ne sont pas obligatoires</div> 
+                <div class="soustitre">seules la date de vente et la photo de la voiture ne sont pas obligatoires</div> 
             </div>
             <form asp-controller="Voiture" asp-action="Create" method="post" enctype="multipart/form-data">
                 <div asp-validation-summary="All" class="text-danger mb-3"></div>
@@ -108,7 +107,7 @@
                 </div>
                 <div class="mb-3">
                     <label asp-for="DateAchat" class="form-label">Date d'achat</label>
-                    <input asp-for="DateAchat" type="date" min="1990-01-01" max="@DateTime.Today.AddYears(1).ToString("yyyy-MM-dd")" class="form-control border-dark">
+                    <input asp-for="DateAchat" type="date" min="1990-01-01" max="@DateTime.Today.AddYears(1)" class="form-control border-dark">
                     <span asp-validation-for="DateAchat" class="text-danger"></span>
                 </div>
                 <div class="mb-3">
@@ -135,7 +134,7 @@
                 </div>
                 <div class="mb-3">
                     <label asp-for="DateDisponibilite" class="form-label">Date de disponibilité</label>
-                    <input asp-for="DateDisponibilite" type="date" min="1990-01-01" max="@DateTime.Today.AddYears(1).ToString("yyyy-MM-dd")" class="form-control border-dark">
+                    <input asp-for="DateDisponibilite" type="date" min="1990-01-01" max="@DateTime.Today.AddYears(1)" class="form-control border-dark">
                     <span asp-validation-for="DateDisponibilite" class="text-danger"></span>
                 </div>
                 <div class="mb-3">
@@ -152,7 +151,7 @@
                 </div>
                 <div class="mb-3">
                     <label asp-for="DateVente" class="form-label">Date de vente</label>
-                    <input asp-for="DateVente" type="date" min="1990-01-01" max="@DateTime.Today.AddYears(1).ToString("yyyy-MM-dd")" class="form-control border-dark">
+                    <input asp-for="DateVente" type="date" min="1990-01-01" max="@DateTime.Today.AddYears(1)" class="form-control border-dark">
                     <span asp-validation-for="DateVente" class="text-danger"></span>
                 </div>
                 <div class="mb-3">

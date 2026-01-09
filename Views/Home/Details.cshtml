@@ -17,11 +17,11 @@
                     <div class="col-12 col-lg-8">
                         @if (Model.PhotoUrl == null)
                         {
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/Fiat500-pot-de-yaourt-av-byRundvald.jpg" class="img-fluid rounded-start-3 rounded-end-1" alt="@Model.NomComplet" />
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/Fiat500-pot-de-yaourt-av-byRundvald.jpg" class="img-fluid rounded-start-3 rounded-end-1" alt=" Photo de @Model.NomComplet"" />
                         }
                         else
                         {
-                            <img src="@Model.PhotoUrl" class="img-fluid rounded-start-3 rounded-end-1" alt="@Model.NomComplet" />
+                            <img src="@Model.PhotoUrl" class="img-fluid rounded-start-3 rounded-end-1" alt="Image par défaut ne correspondant pas à la @Model.NomComplet" />
                         }
                     </div>
                     <div class="col-12 col-lg-4">

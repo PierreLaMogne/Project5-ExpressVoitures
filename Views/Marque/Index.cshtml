@@ -15,7 +15,7 @@
             </div>
             @if (TempData["ErrorMessage"] != null)
             {
-                <div class="alert alert-danger">
+                <div class="alert alert-danger" role="alert">
                     @TempData["ErrorMessage"]
                 </div>
             }
@@ -27,7 +27,7 @@
                         <option value="" disabled selected>Sélectionner une marque</option>
                         @foreach (var marque in ViewBag.Marques)
                         {
-                            <option value="@marque.Id">@marque.Nom</option>
+                            <option value="@marque.Id" data-nom="@marque.Nom">@marque.Nom</option>
                         }
                     </select>
                 </div>
@@ -100,21 +100,24 @@
         $(document).ready(function(){
             $('#itemSelect').change(function(){
                 var selectedId = $(this).val();
+                var selectedNom = $(this).find('option:selected').data('nom');
                 if(selectedId){
                     $('#validationItem').text('');
                     $('#selectedId').val(selectedId);
                     $('#btnModifier').css({'pointer-events': 'auto', 'opacity': '1'});
                     $('#btnSupprimer').css({'pointer-events': 'auto', 'opacity': '1'});
-                    $('#modalModificationId').val(selectedId);  // ✓ Remplit le champ caché
-                    $('#formModification').attr('action', '/Marque/Edit/' + selectedId);  // ✓ Définit la route
+                    $('#modalModificationId').val(selectedId);
+                    $('#formModification').attr('action', '/Marque/Edit/' + selectedId);
                     $('#modalSupprId').val(selectedId);
+                    $('input[name="MarqueNom"]').val(selectedNom);  // ✓ Préremplir le champ
                 } else {
                     $('#validationItem').text('Veuillez sélectionner une marque.');
                     $('#selectedId').val('');
                     $('#btnModifier').css({'pointer-events': 'none', 'opacity': '0.6'});
                     $('#btnSupprimer').css({'pointer-events': 'none', 'opacity': '0.6'});
-                    $('#modalModificationId').val('');  // ✓ Réinitialiser
+                    $('#modalModificationId').val('');
                     $('#modalSupprId').val('');
+                    $('input[name="MarqueNom"]').val('');  // ✓ Réinitialiser
                 }
             });
         });
