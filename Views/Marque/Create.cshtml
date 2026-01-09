@@ -1,0 +1,32 @@
+﻿@using Net_P5.ViewModels
+@model MarqueViewModel
+@using Net_P5.Data
+@inject ApplicationDbContext DbContext
+@using Microsoft.EntityFrameworkCore
+
+@{
+    ViewData["Title"] = "Ajouter une marque";
+}
+
+<div class="container">
+    <div class="row mb-5">
+        <div class="col-4 offset-4">
+            <div class="text-center mb-5">
+                <div class="titre mb-2">Ajouter une marque</div>
+                <div class="soustitre">tous les champs sont obligatoires</div>
+            </div>
+
+            <form asp-controller="Marque" asp-action="Create" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label asp-for="MarqueNom" class="form-label">Nom de la marque</label>
+                    <input asp-for="MarqueNom" class="form-control border-dark">
+                    <span asp-validation-for="MarqueNom" class="text-danger"></span>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary">Créer</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>

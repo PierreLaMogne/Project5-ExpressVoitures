@@ -1,0 +1,145 @@
+﻿@using Net_P5.ViewModels
+@model FinitionViewModel
+@using Net_P5.Data
+
+
+@{
+    ViewData["Title"] = "Modifier ou supprimer une finition";
+}
+
+<div class="container">
+    <div class="row mb-5">
+        <div class="col-4 offset-4">
+            <div class="text-center mb-5">
+                <div class="titre mb-2">Modifier ou supprimer une finition</div>
+            </div>
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+
+            <div class="mb-3">
+                <label class="form-label">Sélectionner une finition</label>
+                <div class="d-flex flex-column flex-lg-row">
+                    <select id="itemSelect" class="form-select border-dark mb-2 mb-md-0 flex-md-grow-1" required>
+                        <option value="" disabled selected>Sélectionner une finition</option>
+                        @foreach (var finition in ViewBag.Finitions)
+                        {
+                            <option value="@finition.Id" data-modele-id="@finition.ModeleId">@finition.Modele.Nom @finition.Nom</option>
+                        }
+                    </select>
+                </div>
+                <span class="text-danger" id="validationItem"></span>
+            </div>
+            <input type="hidden" id="selectedId" value="" />
+
+            <div class="d-flex justify-content-center gap-2 mb-3">
+                <a class="btn btn-primary" href="#" role="button" data-bs-toggle="modal" data-bs-target="#ConfirmerModification"
+                   aria-label="Modifier l'élément sélectionné" style="pointer-events: none; opacity: 0.6;" id="btnModifier">
+                    Modifier
+                </a>
+                <a class="btn btn-primary" href="#" role="button" data-bs-toggle="modal" data-bs-target="#ConfirmerSuppression"
+                   aria-label="Supprimer l'élément sélectionné" style="pointer-events: none; opacity: 0.6;" id="btnSupprimer">
+                    Supprimer
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="ConfirmerModification" tabindex="-1" aria-labelledby="ModalSuppression" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title fs-5" id="ModalSuppression">Indiquer les nouvelles informations</div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row d-flex justify-content-center">
+                    <form asp-controller="Finition" asp-action="Edit" asp-route-id="" method="post" id="formModification">
+                        <input type="hidden" asp-for="FinitionId" id="modalModificationId" />
+                        <div class="mb-3">
+                            <label asp-for="FinitionNom" class="form-label">Nouveau nom de la finition</label>
+                            <input asp-for="FinitionNom" class="form-control border-dark" id="modalModificationNom">
+                            <span asp-validation-for="FinitionNom" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">À quel modèle appartient cette finition ?</label>
+                            <div class="d-flex flex-column flex-lg-row">
+                                <select asp-for="ModeleId" class="form-select border-dark mb-2 mb-md-0 flex-md-grow-1" id="modalModificationModeleId" required style="border-top-right-radius: 0.375rem; border-bottom-right-radius: 0.375rem;">
+                                    <option value="" disabled selected>Sélectionnez un modèle</option>
+                                    @foreach (var modele in ViewBag.Modeles)
+                                    {
+                                        <option value="@modele.Id">@modele.Nom</option>
+                                    }
+                                </select>
+                            </div>
+                            <span asp-validation-for="ModeleId" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Modifier</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ConfirmerSuppression" tabindex="-1" aria-labelledby="ModalSuppression" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title fs-5" id="ModalSuppression">Confirmer la suppression ?</div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row d-flex justify-content-center">
+                    <form asp-controller="Finition" asp-action="Delete" method="post">
+                        <input type="hidden" id="modalSupprId" name="Id" value="" />
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-primary">Oui, supprimer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Script pour récupérer la valeur SelectedId-->
+@section Scripts {
+    <script>
+        $(document).ready(function(){
+            $('#itemSelect').change(function(){
+                var selectedId = $(this).val();
+                if(selectedId){
+                    var selectedOption = $(this).find('option:selected');
+                    var selectedNom = selectedOption.text();
+                    var selectedModeleId = selectedOption.data('modele-id');
+
+                    $('#validationItem').text('');
+                    $('#selectedId').val(selectedId);
+                    $('#btnModifier').css({'pointer-events': 'auto', 'opacity': '1'});
+                    $('#btnSupprimer').css({'pointer-events': 'auto', 'opacity': '1'});
+                    $('#modalModificationId').val(selectedId);
+                    $('#formModification').attr('action', '/Modele/Edit/' + selectedId);
+                    $('#modalSupprId').val(selectedId);
+                    $('#modalModificationNom').val(selectedNom);
+                    $('#modalModificationModeleId').val(selectedModeleId);
+                } else {
+                    $('#validationItem').text('Veuillez sélectionner un modèle.');
+                    $('#selectedId').val('');
+                    $('#btnModifier').css({'pointer-events': 'none', 'opacity': '0.6'});
+                    $('#btnSupprimer').css({'pointer-events': 'none', 'opacity': '0.6'});
+                    $('#modalModificationId').val('');
+                    $('#modalSupprId').val('');
+                    $('#modalModificationNom').val('');
+                    $('#modalModificationModeleId').val('');
+                }
+            });
+        });
+    </script>
+}

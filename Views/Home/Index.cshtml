@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<Net_P5.Models.Voiture>
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Accueil";
 }
 
 <div class="container">
@@ -10,19 +10,16 @@
             <div class="titre mb-3">Nos voitures</div>
             @if (User.IsInRole("Admin"))
             {
-                <a asp-controller="Home" asp-action="Create" class="btn btn-primary">+ Ajouter une voiture</a>
+                <a asp-controller="Voiture" asp-action="Create" class="btn btn-primary">+ Ajouter une voiture</a>
             }
         </div>
     </div>
-    <div class="row row-cols-1 row-cols-lg-2 g-4" role="list" aria-label="Liste des voitures disponibles">
+    <div class="row row-cols-1 row-cols-lg-2 g-4 mb-5" role="list" aria-label="Liste des voitures disponibles">
         @foreach (var item in Model)
         {
             <div class="col" role="listitem">
-                <a asp-controller="Home" 
-                   asp-action="Details" 
-                   asp-route-id="@item.CodeVIN" 
-                   class="text-decoration-none"
-                   aria-label="Voir les détails de @item.Finition?.Modele?.Marque?.Nom @item.Finition?.Modele?.Nom @item.Finition?.Nom de @item.Annee à @item.PrixVente.ToString("C2")">
+                <a asp-controller="Home" asp-action="Details" asp-route-id="@item.CodeVIN" class="text-decoration-none card-link"
+                    aria-label="Voir les détails de @item.Finition?.Modele?.Marque?.Nom @item.Finition?.Modele?.Nom @item.Finition?.Nom de @item.Annee à @item.PrixVente.ToString("C2")">
                     <div class="card h-100 border-0 shadow-sm">
                         <div class="row g-0 d-flex align-items-center">
                             <div class="col-8">
@@ -47,11 +44,11 @@
                             </div>
                             <div class="col-4">
                                 <div class="card-body p-1">
-                                    <h2 class="card-title mb-2 h5" aria-label="Prix">@item.PrixVente.ToString("C2")</h2>
+                                    <div class="card-title mb-3" aria-label="Prix">@item.PrixVente.ToString("C2")</div>
                                     <ul class="list-unstyled mb-0">
                                         <li class="card-text mb-1">
                                             <span class="visually-hidden">Année :</span>
-                                            <strong>@item.Annee</strong>
+                                            @item.Annee
                                         </li>
                                         <li class="card-text mb-1">
                                             <span class="visually-hidden">Marque :</span>
@@ -61,9 +58,13 @@
                                             <span class="visually-hidden">Modèle :</span>
                                             @item.Finition?.Modele?.Nom
                                         </li>
-                                        <li class="card-text mb-1">
+                                        <li class="card-text mb-3">
                                             <span class="visually-hidden">Finition :</span>
                                             @item.Finition?.Nom
+                                        </li>
+                                        <li class="card-text fst-italic mb-1">
+                                            <span class="visually-hidden">Statut :</span>
+                                            <strong>@item.Statut</strong> 
                                         </li>
                                     </ul>
                                 </div>

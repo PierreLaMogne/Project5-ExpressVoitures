@@ -13,6 +13,10 @@ namespace Net_P5.Models
         [Display(Name = "Nom de la finition")]
         public string Nom { get; set; } = string.Empty;
 
+        //Propriétés calculées
+        [NotMapped]
+        public string NomComplet => $"{Modele.Marque.Nom} {Modele.Nom} {Nom}";
+
         //Clé étrangère
         [ForeignKey(nameof(ModeleId))]
         public int ModeleId { get; set; }

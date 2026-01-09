@@ -27,12 +27,8 @@ namespace Net_P5.Models
         [Required(ErrorMessage = "Le prix est obligatoire.")]
         [Display(Name = "Prix d'achat")]
         [Precision(12, 2)]
+        [Range(0, (double)decimal.MaxValue)]
         public decimal PrixAchat { get; set; }
-
-        [Required(ErrorMessage = "Le prix de vente est obligatoire.")]
-        [Display(Name = "Prix de vente")]
-        [Precision(12, 2)]
-        public decimal PrixVente { get; set; }
 
         [NotMapped]
         [Display(Name = "Photo de la voiture")]
@@ -56,27 +52,19 @@ namespace Net_P5.Models
         [NotMapped]
         public string Statut => EstVendue ? "Vendue" : EstEnReparation ? "En réparation" : EnVente ? "Disponible" : "Indisponible";
 
-         [NotMapped]
-        public string NomComplet => $"{Marque?.Nom} {Modele?.Nom} {Finition?.Nom}";
+        [NotMapped]
+        public string NomComplet => $"{Finition?.Modele?.Marque?.Nom} {Finition?.Modele?.Nom} {Finition?.Nom}";
 
-        //Prix de vente calculé automatiquement
-        //[NotMapped]
-        //public decimal PrixVente => Reparations.Sum(r => r.Cout) + PrixAchat;
+        [NotMapped]
+        public decimal PrixVente => Reparations.Sum(r => r.Cout) + PrixAchat + 500;
 
 
         //Clés étrangères
 
-        [ForeignKey(nameof(MarqueId))]
-        public int MarqueId { get; set; }
-        public virtual Marque Marque { get; set; } = null!;
-
-        [ForeignKey(nameof(ModeleId))]
-        public int ModeleId { get; set; }
-        public virtual Modele Modele { get; set; } = null!;
-
         [ForeignKey(nameof(FinitionId))]
         public int FinitionId { get; set; }
         public virtual Finition Finition { get; set; } = null!;
+
 
         //Collections de navigation
 

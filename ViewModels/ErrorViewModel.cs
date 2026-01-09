@@ -1,4 +1,4 @@
-namespace Net_P5.Models
+namespace Net_P5.ViewModels
 {
     public class ErrorViewModel
     {

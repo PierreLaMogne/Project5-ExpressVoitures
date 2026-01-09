@@ -88,12 +88,34 @@ navbar-brand {
     line-height: 100%;
     letter-spacing: 0%;
     text-align: center;
-    color: rgba(44,24,16,1)
+    color: rgba(44,24,16,1);
+    border-color: rgba(44,24,16,1);
 }
 
-    .btn-primary:hover {
+    .btn-primary:hover,
+    .btn-primary.show { 
+        background: rgba(185, 144, 86, 1);
+        border-color: rgba(44,24,16,1);
+    }
+
+    .btn-primary.dropdown-toggle.show { 
         background: rgba(185, 144, 86, 1);
     }
+
+.dropdown-menu .dropdown-item {
+    font-family: DM Sans;   
+    font-weight: 400;
+    font-size: 1rem;
+    color: rgba(44,24,16,1);
+}
+
+    .dropdown-menu .dropdown-item:hover,
+    .dropdown-menu .dropdown-item:focus {
+        background: rgba(185, 144, 86, 1) !important;
+        color: rgba(255, 255, 255, 1) !important;
+    }
+
+
 
 .btn-modifier {
     font-family: DM Sans;

@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Net_P5.Data;
 using Net_P5.Models;
+using Net_P5.ViewModels;
 
-namespace P5_ExpressVoitures.Controllers
+namespace Net_P5.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ModeleController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -13,103 +16,243 @@ namespace P5_ExpressVoitures.Controllers
             _context = context;
         }
 
-
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var modele = await _context.Modeles
-                .Include(m => m.Marque)
-                .Include(m => m.Finitions)
-                .ToListAsync();
-            return View(modele);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Details(int id)
-        {
-            var modele = await _context.Modeles.FindAsync(id);
-            if (modele == null)
-            {
-                return NotFound();
-            }
-            return View(modele);
-        }
-
-        [HttpGet]
-        public IActionResult Create()
-        {
+            await PopulateDropdowns();
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            var model = new ModeleViewModel();
+            await PopulateDropdowns();
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Modele modele)
+        public async Task<IActionResult> Create(ModeleViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Modeles.Add(modele);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
+                await PopulateDropdowns();
+                return View(model);
             }
-            return View(modele);
+
+            //Vérification si un modèle porte déjà ce nom
+            var modeleExist = await _context.Modeles
+                .FirstOrDefaultAsync(mo => mo.Nom == model.ModeleNom);
+            if (modeleExist != null)
+            {
+                ModelState.AddModelError("ModeleNom", "Un modèle avec ce nom existe déjà.");
+                await PopulateDropdowns();
+                return View(model);
+            }
+
+
+            var modelee = new Modele
+            {
+                Nom = model.ModeleNom,
+                MarqueId = model.MarqueId
+            };
+
+            _context.Modeles.Add(modelee);
+            await _context.SaveChangesAsync();
+
+            // Charger le modèle pour l'affichage TempData
+            var modeleReloaded = await _context.Modeles
+                .Include(m => m.Marque)
+                .FirstOrDefaultAsync(m => m.Id == modelee.Id);
+
+            TempData["Message"] = modeleReloaded!.NomComplet;
+
+            return RedirectToAction(nameof(CreateConfirmation));
+        }
+
+        [HttpGet]
+        public IActionResult CreateConfirmation()
+        {
+            return View();
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var modele = await _context.Modeles.FindAsync(id);
-            if (modele == null)
+            if (id != _context.Modeles.FirstOrDefault(mo => mo.Id == id)?.Id)
             {
-                return NotFound();
+                return BadRequest();
             }
-            return View(modele);
+
+            var modele = await _context.Modeles
+                .Include(mo => mo.Marque)
+                .FirstOrDefaultAsync(mo => mo.Id == id);
+
+            if (modele == null)
+                return NotFound();
+
+            var viewModel = new ModeleViewModel
+            {
+                ModeleId = modele.Id,
+                ModeleNom = modele.Nom,
+                MarqueId = modele.Marque.Id,
+            };
+
+            await PopulateDropdowns();
+            return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Modele modele)
+        public async Task<IActionResult> Edit(int id, ModeleViewModel model)
         {
-            if (id != modele.Id) return BadRequest();
-
-            var existingModele = await _context.Modeles.FindAsync(id);
-            if (existingModele == null)
+            // Vérifier que l'ID de la route correspond à l'ID du modèle
+            if (id != model.ModeleId)
             {
-                return NotFound();
+                return BadRequest("L'ID de la route ne correspond pas à l'ID du modèle.");
             }
-            if (ModelState.IsValid)
-            {
-                existingModele.Nom = modele.Nom;
-                existingModele.MarqueId = modele.MarqueId;
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
-            }
-            return View(modele);
-        }
 
-        [HttpGet]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var modele = await _context.Modeles.FindAsync(id);
+            // Vérification du format des données
+            if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "Le nom saisi pour le modèle est incorrect (nom obligatoire avec 50 caractères max)";
+                await PopulateDropdowns();
+                return RedirectToAction(nameof(Index));
+            }
+
+            //Vérification si un modèle porte déjà ce nom (autre que celle en cours de modification)
+            var modeleExist = await _context.Modeles
+                .FirstOrDefaultAsync(mo => mo.Nom == model.ModeleNom && mo.Id != id);
+            if (modeleExist != null)
+            {
+                TempData["ErrorMessage"] = "Un modèle avec ce nom existe déjà";
+                await PopulateDropdowns();
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Récupération du modèle existant (utiliser l'id validé)
+            var modele = await _context.Modeles
+                .Include(mo => mo.Marque)
+                .FirstOrDefaultAsync(mo => mo.Id == id);
             if (modele == null)
             {
                 return NotFound();
             }
-            return View(modele);
+
+            // Mise à jour des propriétés du modèle
+            modele.Nom = model.ModeleNom;
+            modele.MarqueId = model.MarqueId;
+
+            // Enregistrement des modifications et redirection
+            _context.Modeles.Update(modele);
+            await _context.SaveChangesAsync();
+
+            // Recharger complètement l'entité avec ses nouvelles propriétés de navigation
+            var modeleReloaded = await _context.Modeles
+                .Include(mo => mo.Marque)
+                .FirstOrDefaultAsync(mo => mo.Id == id);
+
+            TempData["Message"] = modeleReloaded!.NomComplet;
+
+            return RedirectToAction(nameof(EditConfirmation));
         }
+
+        [HttpGet]
+        public IActionResult EditConfirmation()
+        {
+            return View();
+        }
+
+        //Non nécessaire car utilisation d'un modal
+        /*[HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            if (id != _context.Modeles.FirstOrDefault(mo => mo.Id == id)?.Id)
+            {
+                return BadRequest();
+            }
+
+            var modele = await _context.Modeles
+                .Include(mo => mo.Marque)
+                .FirstOrDefaultAsync(mo => mo.Id == id);
+                
+            if (modele == null)
+            {
+                return NotFound();
+            }
+            
+            var viewModel = new ModeleViewModel
+            {
+                ModeleId = modele.Id,
+                ModeleNom = modele.Nom,
+                MarqueId = modele.Marque.Id,
+                MarqueNom = modele.Marque.Nom
+            };
+            
+            return View(viewModel);
+        }
+        */
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var modele = await _context.Modeles.FindAsync(id);
+            if (id != _context.Modeles.FirstOrDefault(mo => mo.Id == id)?.Id)
+            {
+                return BadRequest();
+            }
+
+            var modele = await _context.Modeles
+                .Include(mo => mo.Marque)
+                .FirstOrDefaultAsync(mo => mo.Id == id);
+                
             if (modele == null)
             {
                 return NotFound();
             }
-            _context.Modeles.Remove(modele);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
+
+            //Vérifier qu'aucune voiture n'utilise ce modèle avant de la supprimer
+            var count = await _context.Voitures
+                .Include(v => v.Finition)
+                    .ThenInclude(f => f.Modele)
+                        .ThenInclude(m => m.Marque)
+                .CountAsync(v => v.Finition.Modele.Id == id);
+            if (count > 0)
+            {
+                TempData["ErrorMessage"] = $"Impossible de supprimer ce modèle, {count} voiture(s) y sont associée(s).";
+                return RedirectToAction(nameof(Index));
+            }
+
+            TempData["Message"] = modele.NomComplet;
+
+            try
+            {
+                _context.Modeles.Remove(modele);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(DeleteConfirmation));
+            }
+            catch (DbUpdateException)
+            {
+                TempData["ErrorMessage"] = "Une erreur est survenue lors de la suppression du modèle. Veuillez réessayer.";
+                return RedirectToAction(nameof(Index));
+            }
         }
+
+        [HttpGet]
+        public IActionResult DeleteConfirmation()
+        {
+            return View();
+        }
+
+        //Remplissage des champs Select
+        public async Task PopulateDropdowns()
+        {
+            ViewBag.Marques = await _context.Marques.OrderBy(m => m.Nom).ToListAsync();
+            ViewBag.Modeles = await _context.Modeles.OrderBy(mo => mo.Nom).ToListAsync();
+            ViewBag.Finitions = await _context.Finitions.OrderBy(f => f.Modele.Nom).ThenBy(f => f.Nom).ToListAsync();
+        }
+
     }
 }

@@ -13,26 +13,29 @@
                 <div class="mb-4">
                     <a asp-action="Index" class="return-link text-decoration-none">← Retour</a>
                 </div>
-                <div class="row g-0">
-                    <div class="col-8">
+                <div class="row mb-5">
+                    <div class="col-12 col-lg-8">
                         @if (Model.PhotoUrl == null)
                         {
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/Fiat500-pot-de-yaourt-av-byRundvald.jpg" class="img-fluid rounded-start-3 rounded-end-1" alt="@Model.NomComplet" />
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/Fiat500-pot-de-yaourt-av-byRundvald.jpg" class="img-fluid rounded-start-3 rounded-end-1" alt=" Photo de @Model.NomComplet"" />
                         }
                         else
                         {
-                            <img src="@Model.PhotoUrl" class="img-fluid rounded-start-3 rounded-end-1" alt="@Model.NomComplet" />
+                            <img src="@Model.PhotoUrl" class="img-fluid rounded-start-3 rounded-end-1" alt="Image par défaut ne correspondant pas à la @Model.NomComplet" />
                         }
-                        </div>
-                        <div class="col-4">
-                            @if (User.IsInRole("Admin"))
-                            {
-                                <div class="text-normal ms-1 mb-5">
-                                    Vous avez publié cette annonce, vous pouvez la :
-                                    <a class="btn btn-modifier" asp-controller="Home" asp-action="Edit" asp-route-id="@Model.CodeVIN">Modifier</a>
-                                    <a class="btn btn-supprimer" data-bs-toggle="modal" data-bs-target="#ConfirmerSuppression">Supprimer</a>
-                                </div>
-                            }
+                    </div>
+                    <div class="col-12 col-lg-4">
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <div class="text-normal mb-5">
+                                Vous avez publié cette annonce, vous pouvez la :
+                                <a class="btn btn-modifier" asp-controller="Voiture" asp-action="Edit" asp-route-id="@Model.CodeVIN" role="button" aria-label="Modifier ce véhicule">Modifier</a>
+                                <a class="btn btn-supprimer" href="#" data-bs-toggle="modal" data-bs-target="#ConfirmerSuppression" role="button"
+                                    aria-label="Supprimer ce véhicule (ouvre confirmation)" aria-haspopup="dialog" aria-expanded="false" aria-controls="ConfirmerSuppression">
+                                    Supprimer
+                                </a>
+                            </div>
+
                             <div class="modal fade" id="ConfirmerSuppression" tabindex="-1" aria-labelledby="ModalSuppression" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
@@ -42,7 +45,7 @@
                                         </div>
                                         <div class="modal-body">
                                             <div class="row d-flex justify-content-center">
-                                                <form asp-controller="Home" asp-action="Delete" asp-route-id="@Model.CodeVIN" method="post">
+                                                <form asp-controller="Voiture" asp-action="Delete" asp-route-id="@Model.CodeVIN" method="post">
                                                     <button type="submit" class="btn btn-primary">Oui, supprimer</button>
                                                 </form>
                                             </div>
@@ -50,12 +53,64 @@
                                     </div>
                                 </div>
                             </div>
+                        }
+
+                        @{
+                            var reparation = Model.Reparations.FirstOrDefault();
+                            var vente = Model.Ventes.FirstOrDefault();
+                        }
+
                         <div class="card-body align-content-center">
-                            <p class="card-title fw-bold mb-5">@Model.PrixVente.ToString("C2")</p>
-                            <p class="card-text mb-4">@Model.Annee</p>
-                            <p class="card-text mb-4">@Model.Finition.Modele.Marque.Nom</p>
-                            <p class="card-text mb-4">@Model.Finition.Modele.Nom</p>
-                            <p class="card-text mb-4">@Model.Finition.Nom</p>
+                            <div class="card-title detail-item">
+                                Prix de vente :
+                                <div class="mt-2">@Model.PrixVente.ToString("C2")</div>
+                                <div class="fst-italic mt-3">@Model.Statut</div>
+                            </div>
+                            <div class="card-text mt-5">
+                                <strong>Année de fabrication :</strong>
+                                <div>
+                                    @Model.Annee
+                                </div>
+                            </div>
+                            <div class="card-text mt-3">
+                                <strong>Marque :</strong>
+                                <div>
+                                    @Model.Finition.Modele.Marque.Nom
+                                </div>
+                            </div>
+                            <div class="card-text mt-3">
+                                <strong>Modèle :</strong>
+                                <div>
+                                    @Model.Finition.Modele.Nom
+                                </div>
+                            </div>
+                            <div class="card-text mt-3">
+                                <strong>Finition :</strong>
+                                <div>
+                                    @Model.Finition.Nom
+                                </div>
+                            </div>
+                            <div class="card-text mt-3">
+                                <strong>Détail des réparations :</strong>
+                                <div>           
+                                    @reparation!.Detail
+                                </div>
+                            </div>
+                            <div class="card-text mt-3">
+                                <strong>Date de disponibilité :</strong>
+                                <div>
+                                    @reparation!.DateDisponibilite
+                                </div>
+                            </div>
+                            @if(vente != null)
+                            {
+                                <div class="card-text mt-3">
+                                    <strong>Date de vente :</strong>
+                                    <div>
+                                        @vente.DateVente
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>

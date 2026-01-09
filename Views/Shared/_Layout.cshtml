@@ -12,33 +12,43 @@
 
 </head>
 <body>
-    <a href="#main-content" class="visually-hidden-focusable">Aller au contenu principal</a>
-    <header role="banner">
-        <nav role="navigation" aria-label="Navigation principale" class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white box-shadow mb-5">
-            <div class="container-fluid">
-                <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">Express Voitures</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Accueil</a>
-                        </li>
-
-                        @if (User.IsInRole("Admin"))
-                        {
+    <a href="#main-content" class="skip-link visually-hidden-focusable">
+        Aller au contenu principal
+    </a>
+    @{var isIdentityArea = ViewContext.RouteData.Values["area"]?.ToString() == "Identity";}
+    
+    @if (!isIdentityArea)
+    {
+        <header role="banner">
+            <nav role="navigation" aria-label="Navigation principale" class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white box-shadow mb-5">
+                <div class="container-fluid">
+                    <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">Express Voitures</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
+                        <ul class="navbar-nav">
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Create">Ajouter une voiture</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Accueil</a>
                             </li>
-                        }
-                    </ul>
-                    <partial name="_LoginPartial" />
+
+                            @if (User.IsInRole("Admin"))
+                            {
+                                var isCreateVoiture = ViewContext.RouteData.Values["Controller"]?.ToString() == "Voiture"
+                                                   && ViewContext.RouteData.Values["Action"]?.ToString() == "Create";
+                                var activeClass = isCreateVoiture ? "fw-bold" : "";
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark @activeClass" asp-area="" asp-controller="Voiture" asp-action="Create">Ajouter une voiture</a>
+                                </li>
+                            }
+                            <partial name="_LoginPartial" />
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </nav>
-    </header>
+            </nav>
+        </header>
+    }
 
     <main id="main-content" role="main">
         @RenderBody()

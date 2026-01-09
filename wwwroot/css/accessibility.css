@@ -1,23 +1,76 @@
-/* Skip to main content link */
-.skip-link {
-    position: absolute;
-    top: -40px;
-    left: 0;
-    background: #000;
-    color: #fff;
-    padding: 8px;
-    z-index: 100;
+/* Focus visible pour tous les éléments interactifs (SAUF cards spécifiques) */
+a:focus:not(.card-link):focus,
+button:focus,
+input:focus,
+select:focus,
+textarea:focus,
+.form-label:focus,
+.form-select:focus,
+.form-control:focus,
+.border-dark:focus,
+.btn:focus,
+.btn-primary:focus,
+.dropdown-menu .dropdown-item:focus,
+.nav-link:focus,
+.btn-modifier:focus,
+.btn-supprimer:focus {
+    position: relative !important;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.5);
+    border: 3px solid #0d6efd;
+    outline: 0px solid #0d6efd !important;
+    outline-offset: 0px !important;
+    border-radius: 0.5rem !important;
 }
 
-.skip-link:focus {
-    top: 0;
+.form-control.border-dark:focus-visible,
+.form-select.border-dark:focus-visible,
+.dropdown-menu .dropdown-item:focus-visible {
+    position: relative !important;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+    border-color: #0d6efd !important;
+    border-width: 3px !important;
+    outline: none !important;
+    outline-offset: 0 !important;
+    border-radius: 0.5rem !important;
 }
 
-/* Focus visible pour tous les éléments interactifs */
-a:focus, button:focus, input:focus, select:focus, textarea:focus {
-    outline: 3px solid #0066cc;
-    outline-offset: 2px;
+/* Focus label focusable - même style que form-control */
+.label-focusable:focus-visible {
+    position: relative !important;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+    border: 3px solid #0d6efd !important;
+    outline: none !important;
+    outline-offset: 0 !important;
+    border-radius: 0.5rem !important;
 }
+
+/* Focus UNIQUEMENT sur card-body pour les cards Index */
+.col a.card-link:focus-visible,
+.col a[asp-controller="Home"][asp-action="Details"]:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+    .col a.card-link:focus-visible .card-body::before,
+    .col a[asp-controller="Home"][asp-action="Details"]:focus-visible .card-body::before {
+        content: '';
+        position: absolute;
+        top: -4px;
+        left: -4px;
+        right: -4px;
+        bottom: -4px;
+        background: transparent;
+        border: 3px solid #0d6efd;
+        border-radius: 0.5rem;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        z-index: 10;
+
+    }
+
+    .col a.card-link:focus-visible .card-body,
+    .col a[asp-controller="Home"][asp-action="Details"]:focus-visible .card-body {
+        position: relative;
+    }
 
 /* Messages d'erreur accessibles */
 .text-danger {
@@ -37,11 +90,15 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
 }
 
 .alert-danger {
-    border-left-color: #d32f2f;
+    background-color: #ffebee;
+    color: #b71c1c;
+    border-left-color: #c62828;
 }
 
 .alert-success {
-    border-left-color: #388e3c;
+    background-color: #e8f5e9;
+    color: #1b5e20;
+    border-left-color: #2e7d32;
 }
 
 /* Contraste WCAG AA minimum */
@@ -54,15 +111,28 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
     color: #495057; /* Ratio 9.7:1 sur fond blanc */
 }
 
-/* Focus visible pour la navigation au clavier */
-a:focus,
-.btn:focus {
-    outline: 3px solid #0d6efd;
-    outline-offset: 2px;
-}
-
 /* État hover accessible */
 .card:hover {
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
     transition: box-shadow 0.3s ease-in-out;
 }
+
+.btn:disabled,
+.form-control:disabled {
+    color: #6c757d !important; /* Ratio 4.6:1 minimum */
+    background-color: #e9ecef !important;
+}
+
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #000;
+    color: #fff;
+    padding: 8px;
+    z-index: 100;
+}
+
+    .skip-link:focus {
+        top: 0;
+    }
