@@ -84,7 +84,7 @@
                             <option value="" disabled selected>Sélectionnez une finition</option>
                             @foreach (var finition in ViewBag.Finitions)
                             {
-                                <option value="@finition.Id">@finition.Nom</option>
+                                <option value="@finition.Id">@finition.Modele.Nom @finition.Nom</option>
                             }
                         </select>
                         <div class="btn-group dropend" role="group">

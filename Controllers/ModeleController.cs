@@ -41,6 +41,17 @@ namespace Net_P5.Controllers
                 return View(model);
             }
 
+            //Vérification si un modèle porte déjà ce nom
+            var modeleExist = await _context.Modeles
+                .FirstOrDefaultAsync(mo => mo.Nom == model.ModeleNom);
+            if (modeleExist != null)
+            {
+                ModelState.AddModelError("ModeleNom", "Un modèle avec ce nom existe déjà.");
+                await PopulateDropdowns();
+                return View(model);
+            }
+
+
             var modelee = new Modele
             {
                 Nom = model.ModeleNom,
@@ -86,7 +97,6 @@ namespace Net_P5.Controllers
                 ModeleId = modele.Id,
                 ModeleNom = modele.Nom,
                 MarqueId = modele.Marque.Id,
-                MarqueNom = modele.Marque.Nom
             };
 
             await PopulateDropdowns();
@@ -106,9 +116,19 @@ namespace Net_P5.Controllers
             // Vérification du format des données
             if (!ModelState.IsValid)
             {
-                ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
+                TempData["ErrorMessage"] = "Le nom saisi pour le modèle est incorrect (nom obligatoire avec 50 caractères max)";
                 await PopulateDropdowns();
-                return View(model);
+                return RedirectToAction(nameof(Index));
+            }
+
+            //Vérification si un modèle porte déjà ce nom (autre que celle en cours de modification)
+            var modeleExist = await _context.Modeles
+                .FirstOrDefaultAsync(mo => mo.Nom == model.ModeleNom && mo.Id != id);
+            if (modeleExist != null)
+            {
+                TempData["ErrorMessage"] = "Un modèle avec ce nom existe déjà";
+                await PopulateDropdowns();
+                return RedirectToAction(nameof(Index));
             }
 
             // Récupération du modèle existant (utiliser l'id validé)
@@ -205,7 +225,7 @@ namespace Net_P5.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            TempData["Message"] = modele.Nom;
+            TempData["Message"] = modele.NomComplet;
 
             try
             {
@@ -229,9 +249,9 @@ namespace Net_P5.Controllers
         //Remplissage des champs Select
         public async Task PopulateDropdowns()
         {
-            ViewBag.Marques = await _context.Marques.ToListAsync();
-            ViewBag.Modeles = await _context.Modeles.ToListAsync();
-            ViewBag.Finitions = await _context.Finitions.ToListAsync();
+            ViewBag.Marques = await _context.Marques.OrderBy(m => m.Nom).ToListAsync();
+            ViewBag.Modeles = await _context.Modeles.OrderBy(mo => mo.Nom).ToListAsync();
+            ViewBag.Finitions = await _context.Finitions.OrderBy(f => f.Modele.Nom).ThenBy(f => f.Nom).ToListAsync();
         }
 
     }

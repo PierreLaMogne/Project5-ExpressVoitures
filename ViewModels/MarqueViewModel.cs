@@ -9,6 +9,7 @@ namespace Net_P5.ViewModels
     {
         public int MarqueId { get; set; }
 
+        [Required(ErrorMessage = "Le nom de la marque est obligatoire")]
         [MaxLength(50, ErrorMessage = "Le nom de la marque ne peut pas dépasser 50 caractères.")]
         public string MarqueNom { get; set; } = string.Empty;
     }

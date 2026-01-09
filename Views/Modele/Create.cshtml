@@ -17,7 +17,6 @@
             </div>
 
             <form asp-controller="Modele" asp-action="Create" method="post" enctype="multipart/form-data">
-                <div asp-validation-summary="All" class="text-danger mb-3"></div>
                 <div class="mb-3">
                     <label asp-for="ModeleNom" class="form-label">Nom du modèle</label>
                     <input asp-for="ModeleNom" class="form-control border-dark">
@@ -43,31 +42,6 @@
                 </div>
             </form>
 
-        </div>
-    </div>
-</div>
-
-<div class="text-normal mb-5">
-    <a class="btn btn-supprimer" href="#" data-bs-toggle="modal" data-bs-target="#ConfirmerSuppression" role="button"
-       aria-label="Supprimer ce véhicule (ouvre confirmation)" aria-haspopup="dialog" aria-expanded="false" aria-controls="ConfirmerSuppression">
-        Supprimer
-    </a>
-</div>
-
-<div class="modal fade" id="ConfirmerSuppression" tabindex="-1" aria-labelledby="ModalSuppression" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title fs-5" id="ModalSuppression">Confirmer la suppression ?</div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row d-flex justify-content-center">
-                    <form asp-controller="Voiture" asp-action="Delete" asp-route-id="@Model.ModeleId" method="post">
-                        <button type="submit" class="btn btn-primary">Oui, supprimer</button>
-                    </form>
-                </div>
-            </div>
         </div>
     </div>
 </div>

@@ -41,6 +41,17 @@ namespace Net_P5.Controllers
                 return View(model);
             }
 
+            // Vérification si une finition porte déjà ce nom
+            var finitionExistante = await _context.Finitions
+                .FirstOrDefaultAsync(f => f.Nom == model.FinitionNom && f.ModeleId == model.ModeleId);
+            if (finitionExistante != null)
+            {
+                ModelState.AddModelError("FinitionNom", "Une finition avec ce nom existe déjà pour le modèle sélectionné");
+                await PopulateDropdowns();
+                return View(model);
+            }
+
+
             var finition = new Finition
             {
                 Nom = model.FinitionNom,
@@ -105,9 +116,19 @@ namespace Net_P5.Controllers
             // Vérification du format des données
             if (!ModelState.IsValid)
             {
-                ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
+                TempData["ErrorMessage"] = "Le nom saisi pour la finition est incorrect (nom obligatoire avec 50 caractères max)";
                 await PopulateDropdowns();
-                return View(model);
+                return RedirectToAction(nameof(Index));
+            }
+
+            //Vérification si une finition porte déjà ce nom (autre que celle en cours de modification)
+            var finitionExistante = await _context.Finitions
+                .FirstOrDefaultAsync(f => f.Nom == model.FinitionNom && f.ModeleId == model.ModeleId && f.Id != id);
+            if (finitionExistante != null)
+            {
+                TempData["ErrorMessage"] = "Une finition avec ce nom existe déjà pour le modèle sélectionné";
+                await PopulateDropdowns();
+                return RedirectToAction(nameof(Index));
             }
 
             // Récupération de la finition existante (utiliser l'id validé)
@@ -145,7 +166,7 @@ namespace Net_P5.Controllers
             return View();
         }
 
-        //Non nécessaire car utilisation d'un modal
+        // Non nécessaire car utilisation d'un modal
         /*[HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
@@ -193,7 +214,7 @@ namespace Net_P5.Controllers
                 return NotFound();
             }
 
-            //Vérifier qu'aucune voiture n'utilise cette finition avant de la supprimer
+            // Vérifier qu'aucune voiture n'utilise cette finition avant de la supprimer
             var count = await _context.Voitures
                 .Include(v => v.Finition)
                     .ThenInclude(f => f.Modele)
@@ -205,7 +226,7 @@ namespace Net_P5.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            TempData["Message"] = finition.Nom;
+            TempData["Message"] = finition.NomComplet;
 
             try
             {
@@ -225,13 +246,13 @@ namespace Net_P5.Controllers
         {
             return View();
         }
-        
-        //Remplissage des champs Select
+
+        // Remplissage des champs Select
         public async Task PopulateDropdowns()
         {
-            ViewBag.Marques = await _context.Marques.ToListAsync();
-            ViewBag.Modeles = await _context.Modeles.ToListAsync();
-            ViewBag.Finitions = await _context.Finitions.ToListAsync();
+            ViewBag.Marques = await _context.Marques.OrderBy(m => m.Nom).ToListAsync();
+            ViewBag.Modeles = await _context.Modeles.OrderBy(mo => mo.Nom).ToListAsync();
+            ViewBag.Finitions = await _context.Finitions.OrderBy(f => f.Modele.Nom).ThenBy(f => f.Nom).ToListAsync();
         }
 
     }

@@ -474,9 +474,9 @@ namespace Net_P5.Controllers
         //Remplissage des champs Select
         public async Task PopulateDropdowns()
         {
-            ViewBag.Marques = await _context.Marques.ToListAsync();
-            ViewBag.Modeles = await _context.Modeles.ToListAsync();
-            ViewBag.Finitions = await _context.Finitions.ToListAsync();
+            ViewBag.Marques = await _context.Marques.OrderBy(m => m.Nom).ToListAsync();
+            ViewBag.Modeles = await _context.Modeles.OrderBy(mo => mo.Nom).ToListAsync();
+            ViewBag.Finitions = await _context.Finitions.OrderBy(f => f.Modele.Nom).ThenBy(f => f.Nom).ToListAsync();
         }
 
     }
