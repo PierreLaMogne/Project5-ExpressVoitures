@@ -29,13 +29,13 @@ namespace Net_P5.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(int id)
         {
             var voiture = await _context.Voitures
                 .Include(v => v.Finition.Modele.Marque)
                 .Include(v => v.Reparations)
                 .Include(v => v.Ventes)
-                .FirstOrDefaultAsync(v => v.CodeVIN == id);
+                .FirstOrDefaultAsync(v => v.Id == id);
 
             if (voiture == null)
             {
