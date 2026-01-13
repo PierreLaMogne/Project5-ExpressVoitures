@@ -213,35 +213,25 @@ namespace Net_P5.Migrations
                 name: "Voitures",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CodeVIN = table.Column<string>(type: "nvarchar(17)", maxLength: 17, nullable: false),
                     Annee = table.Column<int>(type: "int", nullable: false),
                     DateAchat = table.Column<DateOnly>(type: "date", nullable: false),
                     PrixAchat = table.Column<decimal>(type: "decimal(12,2)", precision: 12, scale: 2, nullable: false),
                     PhotoUrl = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     EnVente = table.Column<bool>(type: "bit", nullable: false),
-                    FinitionId = table.Column<int>(type: "int", nullable: false),
-                    MarqueId = table.Column<int>(type: "int", nullable: true),
-                    ModeleId = table.Column<int>(type: "int", nullable: true)
+                    FinitionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Voitures", x => x.CodeVIN);
+                    table.PrimaryKey("PK_Voitures", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Voitures_Finitions_FinitionId",
                         column: x => x.FinitionId,
                         principalTable: "Finitions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Voitures_Marques_MarqueId",
-                        column: x => x.MarqueId,
-                        principalTable: "Marques",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Voitures_Modeles_ModeleId",
-                        column: x => x.ModeleId,
-                        principalTable: "Modeles",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -253,16 +243,16 @@ namespace Net_P5.Migrations
                     Detail = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Cout = table.Column<decimal>(type: "decimal(12,2)", precision: 12, scale: 2, nullable: false),
                     DateDisponibilite = table.Column<DateOnly>(type: "date", nullable: false),
-                    VoitureCodeVIN = table.Column<string>(type: "nvarchar(17)", nullable: false)
+                    VoitureId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Reparations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Reparations_Voitures_VoitureCodeVIN",
-                        column: x => x.VoitureCodeVIN,
+                        name: "FK_Reparations_Voitures_VoitureId",
+                        column: x => x.VoitureId,
                         principalTable: "Voitures",
-                        principalColumn: "CodeVIN",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -273,16 +263,16 @@ namespace Net_P5.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     DateVente = table.Column<DateOnly>(type: "date", nullable: false),
-                    VoitureCodeVIN = table.Column<string>(type: "nvarchar(17)", nullable: false)
+                    VoitureId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Ventes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Ventes_Voitures_VoitureCodeVIN",
-                        column: x => x.VoitureCodeVIN,
+                        name: "FK_Ventes_Voitures_VoitureId",
+                        column: x => x.VoitureId,
                         principalTable: "Voitures",
-                        principalColumn: "CodeVIN",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -336,29 +326,19 @@ namespace Net_P5.Migrations
                 column: "MarqueId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reparations_VoitureCodeVIN",
+                name: "IX_Reparations_VoitureId",
                 table: "Reparations",
-                column: "VoitureCodeVIN");
+                column: "VoitureId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Ventes_VoitureCodeVIN",
+                name: "IX_Ventes_VoitureId",
                 table: "Ventes",
-                column: "VoitureCodeVIN");
+                column: "VoitureId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Voitures_FinitionId",
                 table: "Voitures",
                 column: "FinitionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Voitures_MarqueId",
-                table: "Voitures",
-                column: "MarqueId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Voitures_ModeleId",
-                table: "Voitures",
-                column: "ModeleId");
         }
 
         /// <inheritdoc />

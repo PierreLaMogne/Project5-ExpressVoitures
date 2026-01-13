@@ -8,11 +8,13 @@ namespace Net_P5.Models
     public class Voiture
     {
         [Key]
+        public int Id { get; set; }
+
         [Required(ErrorMessage = "Le code VIN est obligatoire.")]
         [RegularExpression(@"^[A-HJ-NPR-Z0-9]{17}$", ErrorMessage = "Le code VIN doit contenir exactement 17 caractères alphanumériques (sans les lettres I, O, Q).")]
         [MaxLength(17)]
         [Display(Name = "Code VIN")]
-        public required string CodeVIN { get; set; }
+        public string CodeVIN { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "L'année de fabrication est obligatoire.")]
         [Display(Name = "Année de fabrication")]

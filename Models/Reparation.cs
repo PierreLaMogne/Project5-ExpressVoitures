@@ -26,8 +26,8 @@ namespace Net_P5.Models
 
         //Clé étrangère
 
-        [ForeignKey(nameof(VoitureCodeVIN))]
-        public string VoitureCodeVIN { get; set; } = null!;
+        [ForeignKey(nameof(VoitureId))]
+        public int VoitureId { get; set; }
         public virtual Voiture Voiture { get; set; } = null!;
     }
 }
