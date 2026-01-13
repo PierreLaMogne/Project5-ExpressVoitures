@@ -8,10 +8,10 @@
 }
 
 <div class="container">
-    <div class="row mb-5">
-        <div class="col-4 offset-4">
-            <div class="text-center mb-5">
-                <div class="titre mb-2">Modifier ou supprimer un modèle</div>
+    <div class="row justify-content-center align-content-center mb-5">
+        <div class="col-4">
+            <div class="mb-5">
+                <h1 class="titre">Modifier ou supprimer un modèle</h1>
             </div>
             @if (TempData["ErrorMessage"] != null)
             {
@@ -20,27 +20,27 @@
                 </div>
             }
 
-            <div class="mb-3">
-                <label class="form-label">Sélectionner un modèle</label>
-                <div class="d-flex flex-column flex-lg-row">
-                    <select id="itemSelect" class="form-select border-dark mb-2 mb-md-0 flex-md-grow-1" required>
-                        <option value="" disabled selected>Sélectionner un modèle</option>
-                        @foreach (var modele in ViewBag.Modeles)
-                        {
-                            <option value="@modele.Id" data-marque-id="@modele.MarqueId">@modele.Nom</option>
-                        }
-                    </select>
-                </div>
-                <span class="text-danger" id="validationItem"></span>
+            <div class="mb-3 d-flex flex-column align-items-center">
+                <label for="itemSelect" class="form-label">
+                    Sélectionner un modèle
+                    <select id="itemSelect" class="form-select border-dark w-100" required>
+                            <option value="" disabled selected>Sélectionner un modèle</option>
+                            @foreach (var modele in ViewBag.Modeles)
+                            {
+                                <option value="@modele.Id" data-marque-id="@modele.MarqueId">@modele.Nom</option>
+                            }
+                        </select>
+                    <span class="text-danger" id="validationItem"></span>
+                </label>
             </div>
             <input type="hidden" id="selectedId" value="" />
 
             <div class="d-flex justify-content-center gap-3 mb-3">
-                <a class="btn btn-primary" href="#" role="button" data-bs-toggle="modal" data-bs-target="#ConfirmerModification"
+                <a class="btn btn-modifier" href="#" role="button" data-bs-toggle="modal" data-bs-target="#ConfirmerModification"
                    aria-label="Modifier l'élément sélectionné" style="pointer-events: none; opacity: 0.6;" id="btnModifier">
                     Modifier
                 </a>
-                <a class="btn btn-primary" href="#" role="button" data-bs-toggle="modal" data-bs-target="#ConfirmerSuppression"
+                <a class="btn btn-supprimer" href="#" role="button" data-bs-toggle="modal" data-bs-target="#ConfirmerSuppression"
                    aria-label="Supprimer l'élément sélectionné" style="pointer-events: none; opacity: 0.6;" id="btnSupprimer">
                     Supprimer
                 </a>

@@ -23,24 +23,18 @@ namespace Net_P5.Data
         {
             base.OnModelCreating(builder);
 
-            //Configuration des entités
-
-            builder.Entity<Voiture>()
-                .Property(v => v.CodeVIN)
-                .ValueGeneratedNever();
-
             // Configuration des relations entre les entités
 
             builder.Entity<Voiture>()
                 .HasMany(v => v.Reparations)
                 .WithOne(r => r.Voiture)
-                .HasForeignKey(r => r.VoitureCodeVIN)
+                .HasForeignKey(r => r.VoitureId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<Voiture>()
                 .HasMany(v => v.Ventes)
                 .WithOne(ve => ve.Voiture)
-                .HasForeignKey(ve => ve.VoitureCodeVIN)
+                .HasForeignKey(ve => ve.VoitureId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<Marque>()

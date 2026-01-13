@@ -8,6 +8,8 @@ namespace Net_P5.ViewModels
     public class VoitureViewModel
     {
         //Données de la voiture
+        public int Id { get; set; }
+
         [Required(ErrorMessage = "Le code VIN est obligatoire")]
         [RegularExpression(@"^[A-HJ-NPR-Z0-9]{17}$", ErrorMessage = "Le code VIN doit contenir exactement 17 caractères alphanumériques (sans les lettres I, O, Q).")]
         [MaxLength(17)]

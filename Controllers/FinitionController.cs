@@ -64,9 +64,9 @@ namespace Net_P5.Controllers
             // Charger la Finition pour l'affichage TempData
             var finitionCreee = await _context.Finitions
                 .Include(f => f.Modele.Marque)
-                .FirstOrDefaultAsync(f => f.Id == finition.Id);
+                .FirstOrDefaultAsync(f => f.Nom == finition.Nom);
 
-            TempData["Message"] = finition.NomComplet;
+            TempData["Message"] = finitionCreee!.NomComplet;
 
             return RedirectToAction(nameof(CreateConfirmation));
         }
@@ -153,7 +153,7 @@ namespace Net_P5.Controllers
             var finitionReloaded = await _context.Finitions
                 .Include(f => f.Modele)
                     .ThenInclude(m => m.Marque)
-                .FirstOrDefaultAsync(f => f.Id == id);
+                .FirstOrDefaultAsync(f => f.Id == finition.Id);
 
             TempData["Message"] = finitionReloaded!.NomComplet;
 

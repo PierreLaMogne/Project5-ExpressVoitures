@@ -7,7 +7,7 @@
 <div class="container">
     <div class="row mb-5">
         <div class="text-center">
-            <div class="titre mb-3">Nos voitures</div>
+            <h1 class="titre mb-3">Nos voitures</h1>
             @if (User.IsInRole("Admin"))
             {
                 <a asp-controller="Voiture" asp-action="Create" class="btn btn-primary">+ Ajouter une voiture</a>
@@ -18,7 +18,7 @@
         @foreach (var item in Model)
         {
             <div class="col" role="listitem">
-                <a asp-controller="Home" asp-action="Details" asp-route-id="@item.CodeVIN" class="text-decoration-none card-link"
+                <a asp-controller="Home" asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none card-link"
                     aria-label="Voir les détails de @item.Finition?.Modele?.Marque?.Nom @item.Finition?.Modele?.Nom @item.Finition?.Nom de @item.Annee à @item.PrixVente.ToString("C2")">
                     <div class="card h-100 border-0 shadow-sm">
                         <div class="row g-0 d-flex align-items-center">

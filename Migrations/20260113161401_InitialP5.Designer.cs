@@ -12,7 +12,7 @@ using Net_P5.Data;
 namespace Net_P5.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260107142003_InitialP5")]
+    [Migration("20260113161401_InitialP5")]
     partial class InitialP5
     {
         /// <inheritdoc />
@@ -311,13 +311,12 @@ namespace Net_P5.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("VoitureCodeVIN")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(17)");
+                    b.Property<int>("VoitureId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("VoitureCodeVIN");
+                    b.HasIndex("VoitureId");
 
                     b.ToTable("Reparations");
                 });
@@ -333,25 +332,31 @@ namespace Net_P5.Migrations
                     b.Property<DateOnly>("DateVente")
                         .HasColumnType("date");
 
-                    b.Property<string>("VoitureCodeVIN")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(17)");
+                    b.Property<int>("VoitureId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("VoitureCodeVIN");
+                    b.HasIndex("VoitureId");
 
                     b.ToTable("Ventes");
                 });
 
             modelBuilder.Entity("Net_P5.Models.Voiture", b =>
                 {
-                    b.Property<string>("CodeVIN")
-                        .HasMaxLength(17)
-                        .HasColumnType("nvarchar(17)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Annee")
                         .HasColumnType("int");
+
+                    b.Property<string>("CodeVIN")
+                        .IsRequired()
+                        .HasMaxLength(17)
+                        .HasColumnType("nvarchar(17)");
 
                     b.Property<DateOnly>("DateAchat")
                         .HasColumnType("date");
@@ -362,12 +367,6 @@ namespace Net_P5.Migrations
                     b.Property<int>("FinitionId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("MarqueId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ModeleId")
-                        .HasColumnType("int");
-
                     b.Property<string>("PhotoUrl")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
@@ -376,13 +375,9 @@ namespace Net_P5.Migrations
                         .HasPrecision(12, 2)
                         .HasColumnType("decimal(12,2)");
 
-                    b.HasKey("CodeVIN");
+                    b.HasKey("Id");
 
                     b.HasIndex("FinitionId");
-
-                    b.HasIndex("MarqueId");
-
-                    b.HasIndex("ModeleId");
 
                     b.ToTable("Voitures");
                 });
@@ -464,7 +459,7 @@ namespace Net_P5.Migrations
                 {
                     b.HasOne("Net_P5.Models.Voiture", "Voiture")
                         .WithMany("Reparations")
-                        .HasForeignKey("VoitureCodeVIN")
+                        .HasForeignKey("VoitureId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -475,7 +470,7 @@ namespace Net_P5.Migrations
                 {
                     b.HasOne("Net_P5.Models.Voiture", "Voiture")
                         .WithMany("Ventes")
-                        .HasForeignKey("VoitureCodeVIN")
+                        .HasForeignKey("VoitureId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -490,14 +485,6 @@ namespace Net_P5.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Net_P5.Models.Marque", null)
-                        .WithMany("Voitures")
-                        .HasForeignKey("MarqueId");
-
-                    b.HasOne("Net_P5.Models.Modele", null)
-                        .WithMany("Voitures")
-                        .HasForeignKey("ModeleId");
-
                     b.Navigation("Finition");
                 });
 
@@ -509,15 +496,11 @@ namespace Net_P5.Migrations
             modelBuilder.Entity("Net_P5.Models.Marque", b =>
                 {
                     b.Navigation("Modeles");
-
-                    b.Navigation("Voitures");
                 });
 
             modelBuilder.Entity("Net_P5.Models.Modele", b =>
                 {
                     b.Navigation("Finitions");
-
-                    b.Navigation("Voitures");
                 });
 
             modelBuilder.Entity("Net_P5.Models.Voiture", b =>

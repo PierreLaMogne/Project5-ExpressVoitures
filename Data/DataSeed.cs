@@ -85,15 +85,18 @@ namespace Net_P5.Data
             // Vérifier si des réparations existent déjà
             if (!context.Reparations.Any())
             {
+
+                var voitures = context.Voitures.ToList();
+
                 var reparations = new List<Reparation>
                     {
-                        new Reparation { Detail = "Restauration complète", VoitureCodeVIN = "VF1MAZDA000000001", Cout = 7600m, DateDisponibilite = new DateOnly(2022, 4, 7) },
-                        new Reparation { Detail = "Roulements des roues avant", VoitureCodeVIN = "VF1JEEP0000000002", Cout = 350m, DateDisponibilite = new DateOnly(2022, 4, 7) },
-                        new Reparation { Detail = "Radiateur, freins", VoitureCodeVIN = "VF1RENAULT0000003", Cout = 690m, DateDisponibilite = new DateOnly(2022, 4, 8) },
-                        new Reparation { Detail = "Pneus, freins", VoitureCodeVIN = "VF1F0RD0000000004", Cout = 1100m, DateDisponibilite = new DateOnly(2022, 4, 9) },
-                        new Reparation { Detail = "Climatisation, freins", VoitureCodeVIN = "VF1H0NDA000000005", Cout = 475m, DateDisponibilite = new DateOnly(2022, 4, 9) },
-                        new Reparation { Detail = "Pneus", VoitureCodeVIN = "VF1V0LKSWAGEN0006", Cout = 440m, DateDisponibilite = new DateOnly(2022, 4, 10) },
-                        new Reparation { Detail = "Pneus, freins, climatisation", VoitureCodeVIN = "VF1F0RD0000000007", Cout = 950m, DateDisponibilite = new DateOnly(2022, 4, 11) }
+                        new Reparation { Detail = "Restauration complète", VoitureId = voitures.Single(v => v.CodeVIN == "VF1MAZDA000000001").Id, Cout = 7600m, DateDisponibilite = new DateOnly(2022, 4, 7) },
+                        new Reparation { Detail = "Roulements des roues avant", VoitureId = voitures.Single(v => v.CodeVIN == "VF1JEEP0000000002").Id, Cout = 350m, DateDisponibilite = new DateOnly(2022, 4, 7) },
+                        new Reparation { Detail = "Radiateur, freins", VoitureId = voitures.Single(v => v.CodeVIN == "VF1RENAULT0000003").Id, Cout = 690m, DateDisponibilite = new DateOnly(2022, 4, 8) },
+                        new Reparation { Detail = "Pneus, freins", VoitureId = voitures.Single(v => v.CodeVIN == "VF1F0RD0000000004").Id, Cout = 1100m, DateDisponibilite = new DateOnly(2022, 4, 9) },
+                        new Reparation { Detail = "Climatisation, freins", VoitureId = voitures.Single(v => v.CodeVIN == "VF1H0NDA000000005").Id, Cout = 475m, DateDisponibilite = new DateOnly(2022, 4, 9) },
+                        new Reparation { Detail = "Pneus", VoitureId = voitures.Single(v => v.CodeVIN == "VF1V0LKSWAGEN0006").Id, Cout = 440m, DateDisponibilite = new DateOnly(2022, 4, 10) },
+                        new Reparation { Detail = "Pneus, freins, climatisation", VoitureId = voitures.Single(v => v.CodeVIN == "VF1F0RD0000000007").Id, Cout = 950m, DateDisponibilite = new DateOnly(2022, 4, 11) }
                     };
                 context.Reparations.AddRange(reparations);
                 context.SaveChanges();
@@ -102,13 +105,14 @@ namespace Net_P5.Data
             // Vérifier si des ventes existent déjà
             if (!context.Ventes.Any())
             {
+                var voitures = context.Voitures.ToList();
                 var ventes = new List<Vente>
                     {
-                        new Vente { VoitureCodeVIN = "VF1MAZDA000000001", DateVente = new DateOnly(2022, 4, 8)},
-                        new Vente { VoitureCodeVIN = "VF1JEEP0000000002", DateVente = new DateOnly(2022, 4, 9)},
-                        new Vente { VoitureCodeVIN = "VF1H0NDA000000005", DateVente = new DateOnly(2022, 4, 9)},
-                        new Vente { VoitureCodeVIN = "VF1V0LKSWAGEN0006", DateVente = new DateOnly(2022, 4, 12)},
-                        new Vente { VoitureCodeVIN = "VF1F0RD0000000007", DateVente = new DateOnly(2022, 4, 12)}
+                        new Vente { VoitureId = voitures.Single(v => v.CodeVIN == "VF1MAZDA000000001").Id, DateVente = new DateOnly(2022, 4, 8)},
+                        new Vente { VoitureId = voitures.Single(v => v.CodeVIN == "VF1JEEP0000000002").Id, DateVente = new DateOnly(2022, 4, 9)},
+                        new Vente { VoitureId = voitures.Single(v => v.CodeVIN == "VF1H0NDA000000005").Id, DateVente = new DateOnly(2022, 4, 9)},
+                        new Vente { VoitureId = voitures.Single(v => v.CodeVIN == "VF1V0LKSWAGEN0006").Id, DateVente = new DateOnly(2022, 4, 12)},
+                        new Vente { VoitureId = voitures.Single(v => v.CodeVIN == "VF1F0RD0000000007").Id, DateVente = new DateOnly(2022, 4, 12)}
                     };
                 context.Ventes.AddRange(ventes);
                 context.SaveChanges();

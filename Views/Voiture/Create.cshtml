@@ -12,24 +12,24 @@
     <div class="row mb-5">
         <div class="col-4 offset-4">
             <div class="text-center mb-5"> 
-                <div class="titre mb-2">Ajouter une voiture</div>
-                <div class="soustitre">seules la date de vente et la photo de la voiture ne sont pas obligatoires</div> 
+                <h1 class="titre mb-2">Ajouter une voiture</h1>
+                <h2 class="soustitre">seules la date de vente et la photo de la voiture ne sont pas obligatoires</h2> 
             </div>
             <form asp-controller="Voiture" asp-action="Create" method="post" enctype="multipart/form-data">
                 <div asp-validation-summary="All" class="text-danger mb-3"></div>
                 <div class="mb-3">
                     <label asp-for="CodeVIN" class="form-label">Code VIN du véhicule</label>
-                    <input asp-for="CodeVIN" class="form-control border-dark">
+                    <input asp-for="CodeVIN" class="form-control border-dark" aria-required="true">
                     <span asp-validation-for="CodeVIN" class="text-danger"></span>
                 </div>
                 <div class="mb-3">
                     <label asp-for="Annee" class="form-label">Année</label>
-                    <input asp-for="Annee" class="form-control border-dark">
+                    <input asp-for="Annee" class="form-control border-dark" aria-required="true">
                     <span asp-validation-for="Annee" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Marque</label>
+                    <label for="MarqueId" class="form-label">Marque</label>
                     <div class="d-flex flex-column flex-lg-row">
                         <select asp-for="MarqueId" class="form-select border-dark mb-2 mb-md-0 flex-md-grow-1" required style="border-top-right-radius: 0.375rem; border-bottom-right-radius: 0.375rem;">
                             <option value="" disabled selected>Sélectionnez une marque</option>
@@ -53,7 +53,7 @@
 
 
                 <div class="mb-3">
-                    <label class="form-label">Modèle</label>
+                    <label for="ModeleId" class="form-label">Modèle</label>
                     <div class="d-flex flex-column flex-lg-row">
                         <select asp-for="ModeleId" class="form-select border-dark mb-2 mb-md-0 flex-md-grow-1" required style="border-top-right-radius: 0.375rem; border-bottom-right-radius: 0.375rem;">
                             <option value="" disabled selected>Sélectionnez un modèle</option>
@@ -77,7 +77,7 @@
 
 
                 <div class="mb-3">
-                    <label class="form-label">Finition</label>
+                    <label for="FinitionId" class="form-label">Finition</label>
                     <div class="d-flex flex-column flex-lg-row">
                         <select asp-for="FinitionId" class="form-select border-dark mb-2 mb-md-0 flex-md-grow-1" required style="border-top-right-radius: 0.375rem; border-bottom-right-radius: 0.375rem;">
                             <option value="" disabled selected>Sélectionnez une finition</option>
@@ -102,7 +102,7 @@
 
                 <div class="mb-3">
                     <label asp-for="PrixAchat" class="form-label">Prix d'achat</label>
-                    <input asp-for="PrixAchat" class="form-control border-dark">
+                    <input asp-for="PrixAchat" class="form-control border-dark" aria-required="true">
                     <span asp-validation-for="PrixAchat" class="text-danger"></span>
                 </div>
                 <div class="mb-3">
@@ -111,25 +111,27 @@
                     <span asp-validation-for="DateAchat" class="text-danger"></span>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label me-2">Mettre le véhicule en vente ?</label>
-                    <div class="form-check form-check-inline">
-                        <input asp-for="EnVente" type="radio" value="true" class="form-check-input" id="enVenteOui" />
-                        <label class="formlabel" for="enVenteOui">Oui</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input asp-for="EnVente" type="radio" value="false" class="form-check-input" id="enVenteNon" />
-                        <label class="formlabel" for="enVenteNon">Non</label>
+                    <label class="d-flex form-label me-2">Mettre le véhicule en vente ?</label>
+                    <div class="justify-content-md-center">
+                        <div class="form-check form-check-inline">
+                            <input asp-for="EnVente" type="radio" value="true" class="form-check-input" id="enVenteOui" name="enVente" />
+                            <label class="form-label" for="enVenteOui">Oui</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input asp-for="EnVente" type="radio" value="false" class="form-check-input" id="enVenteNon" name="enVente" />
+                            <label class="form-label" for="enVenteNon">Non</label>
+                        </div>
                     </div>
                     <span asp-validation-for="EnVente" class="text-danger"></span>
                 </div>
                 <div class="mb-3">
                     <label asp-for="Detail" class="form-label">Détail des réparations</label>
-                    <input asp-for="Detail" class="form-control border-dark">
+                    <input asp-for="Detail" class="form-control border-dark" aria-required="true">
                     <span asp-validation-for="Detail" class="text-danger"></span>
                 </div>
                 <div class="mb-3">
                     <label asp-for="Cout" class="form-label">Coût des réparations</label>
-                    <input asp-for="Cout" class="form-control border-dark">
+                    <input asp-for="Cout" class="form-control border-dark" aria-required="true">
                     <span asp-validation-for="Cout" class="text-danger"></span>
                 </div>
                 <div class="mb-3">
@@ -138,14 +140,16 @@
                     <span asp-validation-for="DateDisponibilite" class="text-danger"></span>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label me-2">Le véhicule a-t-il été vendu ?</label>
-                    <div class="form-check form-check-inline">
-                        <input asp-for="VoitureVendue" type="radio" value="true" class="form-check-input" id="voitureVendueOui" />
-                        <label class="formlabel" for="voitureVendueOui">Oui</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input asp-for="VoitureVendue" type="radio" value="false" class="form-check-input" id="voitureVendueNon" />
-                        <label class="formlabel" for="voitureVendueNon">Non</label>
+                    <label class="d-flex form-label me-2">Le véhicule a-t-il été vendu ?</label>
+                    <div class="justify-content-md-center">
+                        <div class="form-check form-check-inline">
+                            <input asp-for="VoitureVendue" type="radio" value="true" class="form-check-input" id="voitureVendueOui" name="voitureVendue" />
+                            <label class="form-check-label" for="voitureVendueOui">Oui</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input asp-for="VoitureVendue" type="radio" value="false" class="form-check-input" id="voitureVendueNon" name="voitureVendue" />
+                            <label class="form-check-label" for="voitureVendueNon">Non</label>
+                        </div>
                     </div>
                     <span asp-validation-for="VoitureVendue" class="text-danger"></span>
                 </div>
@@ -159,16 +163,18 @@
                     <div class="border border-dark rounded p-3">
                         <div class="file-upload-wrapper d-flex align-items-center">
                             <input asp-for="Photo" class="form-control d-none" type="file" accept="image/*" id="photoInput" />
-                            <label for="photoInput" class="d-flex align-items-center w-100 p-2 label-focusable" tabindex="0" role="button">
-                                <span class="border border-dark border-2 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
-                                    <i class="bi bi-plus-lg"></i>
+                            <button type="button" class="file-upload-btn d-flex align-items-center w-100 p-2 label-focusable border-0 bg-transparent text-start"
+                                    aria-label="Ajouter une photo de la voiture">
+                                <span class="border border-dark border-2 d-flex align-items-center justify-content-center me-3"
+                                      style="width: 45px; height: 45px; flex-shrink: 0;">
+                                    <i class="bi bi-plus-lg" aria-hidden="true"></i>
                                 </span>
                                 <span class="flex-grow-1 text-center fw-medium text-muted">Ajouter photo</span>
-                            </label>
+                            </button>
                         </div>
                     </div>
                     <span asp-validation-for="Photo" class="text-danger"></span>
-                </div>
+                </div>        
                 <div class="d-flex justify-content-center">
                     <button type="submit" class="btn btn-primary">Publier</button>
                 </div>
@@ -177,8 +183,31 @@
     </div>
 </div>
 
-<!--Affichage de la photo uploadée-->
 @section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const photoInput = document.getElementById('photoInput');
+            const fileUploadBtn = document.querySelector('.file-upload-btn');
+
+            if (photoInput && fileUploadBtn) {
+                // Clic sur le bouton
+                fileUploadBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    photoInput.click();
+                });
+
+                // Clavier (Enter et Espace) - natif au bouton
+                fileUploadBtn.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        photoInput.click();
+                    }
+                });
+            }
+        });
+    </script>
+
+    <!--Affichage de la photo uploadée-->
     <script>
         document.getElementById('photoInput').addEventListener('change', function(e) {
             const file = e.target.files[0];

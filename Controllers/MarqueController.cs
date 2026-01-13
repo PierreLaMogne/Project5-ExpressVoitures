@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AspNetCoreGeneratedDocument;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Net_P5.Data;
@@ -58,7 +59,11 @@ namespace Net_P5.Controllers
             _context.Marques.Add(marque);
             await _context.SaveChangesAsync();
 
-            TempData["Message"] = marque.Nom;
+            // Charger la Finition pour l'affichage TempData
+            var marqueCreee = await _context.Marques
+                .FirstOrDefaultAsync(m => m.Nom == marque.Nom);
+
+            TempData["Message"] = marqueCreee!.Nom;
 
             return RedirectToAction(nameof(CreateConfirmation));
         }
@@ -135,7 +140,7 @@ namespace Net_P5.Controllers
             await _context.SaveChangesAsync();
 
             // Recharger complètement l'entité
-            var marqueReloaded = await _context.Marques.FirstOrDefaultAsync(m => m.Id == id);
+            var marqueReloaded = await _context.Marques.FirstOrDefaultAsync(m => m.Id == marque.Id);
 
             TempData["Message"] = marqueReloaded!.Nom;
 

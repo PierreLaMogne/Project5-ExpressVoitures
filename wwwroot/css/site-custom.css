@@ -23,24 +23,24 @@ navbar-brand {
     }
 
 .titre {
-    font-family: Libre Baskerville;
-    font-weight: 400;
-    font-style: Italic;
-    font-size: 2.75rem;
-    line-height: 100%;
-    letter-spacing: 0%;
-    text-align: center;
-    color: rgba(121,97,87,1)
+    font-family: Libre Baskerville !important;
+    font-weight: 400 !important;
+    font-style: Italic !important;
+    font-size: 2.75rem !important;
+    line-height: 100% !important;
+    letter-spacing: 0% !important;
+    text-align: center !important;
+    color: rgba(121,97,87,1) !important;
 }
 
 .soustitre {
-    font-family: Libre Baskerville;
-    font-weight: 400;
-    font-size: 1rem;
-    line-height: 100%;
-    letter-spacing: 0%;
-    text-align: center;
-    color: rgba(44,24,16,1)
+    font-family: Libre Baskerville !important;
+    font-weight: 400 !important;
+    font-size: 1rem !important;
+    line-height: 100% !important;
+    letter-spacing: 0% !important;
+    text-align: center !important;
+    color: rgba(44,24,16,1) !important;
 }
 
 .text-normal {
@@ -126,8 +126,15 @@ navbar-brand {
     text-decoration: underline;
     text-decoration-style: solid;
     text-decoration-thickness: 0%;
-    color: rgba(146,146,146,1)
+    color: rgba(255, 255, 255, 1);
+    background-color: #0d6efd
 }
+
+    .btn-modifier:hover,
+    .btn-modifier:focus {
+        background-color: #0b5ed7;
+        border-color: #0a58ca;
+    }
 
 .btn-supprimer {
     font-family: DM Sans;
@@ -138,8 +145,15 @@ navbar-brand {
     text-decoration: underline;
     text-decoration-style: solid;
     text-decoration-thickness: 0%;
-    color: rgba(255,0,0,1)
+    color: rgba(255, 255, 255, 1);
+    background-color: #dc3545;
 }
+
+    .btn-supprimer:hover,
+    .btn-supprimer:focus {
+        background-color: #bb2d3b;
+        border-color: #b02a37;
+    }
 
 .form-label {
     font-family: DM Sans;

@@ -21,11 +21,7 @@ namespace Net_P5.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var model = new VoitureViewModel
-            {
-                DateAchat = DateOnly.FromDateTime(DateTime.Now),
-                DateDisponibilite = DateOnly.FromDateTime(DateTime.Now),
-            };
+            var model = new VoitureViewModel();
 
             await PopulateDropdowns();
             return View(model);
@@ -39,7 +35,6 @@ namespace Net_P5.Controllers
             if (!ModelState.IsValid)
             {
                 await PopulateDropdowns();
-                // Amélioration WCAG : Ajouter un message global accessible
                 ViewBag.ErrorSummary = "Le formulaire contient des erreurs. Veuillez corriger les champs indiqués ci-dessous.";
                 return View(model);
             }
@@ -175,7 +170,13 @@ namespace Net_P5.Controllers
             _context.Voitures.Add(voiture);
             await _context.SaveChangesAsync();
 
-            TempData["Message"] = voiture.NomComplet;
+            // Charger la Voiture pour l'affichage TempData
+            var voitureCreee = await _context.Voitures
+                .Include(v => v.Finition.Modele.Marque)
+                .FirstOrDefaultAsync(v => v.CodeVIN == voiture.CodeVIN);
+
+
+            TempData["Message"] = voitureCreee!.NomComplet;
 
             return RedirectToAction(nameof(CreateConfirmation));
         }
@@ -187,9 +188,9 @@ namespace Net_P5.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id != _context.Voitures.FirstOrDefault(v => v.CodeVIN == id)?.CodeVIN)
+            if (id != _context.Voitures.FirstOrDefault(v => v.Id == id)?.Id)
             {
                 return BadRequest();
             }
@@ -198,7 +199,7 @@ namespace Net_P5.Controllers
                 .Include(v => v.Finition.Modele.Marque)
                 .Include(v => v.Reparations)
                 .Include(v => v.Ventes)
-                .FirstOrDefaultAsync(v => v.CodeVIN == id);
+                .FirstOrDefaultAsync(v => v.Id == id);
 
             if (voiture == null)
                 return NotFound();
@@ -209,6 +210,7 @@ namespace Net_P5.Controllers
 
             var viewModel = new VoitureViewModel
             {
+                Id = voiture.Id,
                 CodeVIN = voiture.CodeVIN,
                 Annee = voiture.Annee,
                 DateAchat = voiture.DateAchat,
@@ -251,7 +253,7 @@ namespace Net_P5.Controllers
             }
 
             //Récupération de la voiture existante
-            var voiture = await _context.Voitures.FirstOrDefaultAsync(v => v.CodeVIN == model.CodeVIN);
+            var voiture = await _context.Voitures.FirstOrDefaultAsync(v => v.Id == model.Id);
             if (voiture == null)
             {
                 return NotFound();
@@ -351,7 +353,7 @@ namespace Net_P5.Controllers
                 voiture.PhotoUrl = "/uploads/" + uniqueFileName;
             }
 
-            //Mise à jour des propriétés de la voiture
+            // Mise à jour des propriétés de la voiture
             voiture.CodeVIN = model.CodeVIN;
             voiture.Annee = model.Annee;
             voiture.DateAchat = model.DateAchat;
@@ -359,9 +361,9 @@ namespace Net_P5.Controllers
             voiture.EnVente = model.EnVente;
             voiture.FinitionId = model.FinitionId;
 
-            //Mise à jour des réparations associées si nécessaire
+            // Mise à jour des réparations associées si nécessaire
             var reparation = await _context.Reparations
-                .Where(r => r.VoitureCodeVIN == voiture.CodeVIN)
+                .Where(r => r.VoitureId == voiture.Id)
                 .OrderByDescending(r => r.DateDisponibilite)
                 .FirstOrDefaultAsync();
 
@@ -372,9 +374,9 @@ namespace Net_P5.Controllers
                 reparation.DateDisponibilite = model.DateDisponibilite;
             }
 
-            //Mise à jour ou création des ventes associées si nécessaire
+            // Mise à jour ou création des ventes associées si nécessaire
             var vente = await _context.Ventes
-                .Where(v => v.VoitureCodeVIN == voiture.CodeVIN)
+                .Where(v => v.VoitureId == voiture.Id)
                 .OrderByDescending(v => v.DateVente)
                 .FirstOrDefaultAsync();
 
@@ -397,14 +399,14 @@ namespace Net_P5.Controllers
                 _context.Ventes.Remove(vente);
             }
 
-            //Enregistrement des modifications et redirection
+            // Enregistrement des modifications
             _context.Voitures.Update(voiture);
             await _context.SaveChangesAsync();
 
             // Recharger complètement l'entité avec ses nouvelles propriétés de navigation
             var voitureReloaded = await _context.Voitures
                 .Include(v => v.Finition.Modele.Marque)
-                .FirstOrDefaultAsync(v => v.CodeVIN == model.CodeVIN);
+                .FirstOrDefaultAsync(v => v.Id == voiture.Id);
 
             TempData["Message"] = voitureReloaded!.NomComplet;
 
@@ -418,16 +420,16 @@ namespace Net_P5.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id != _context.Voitures.FirstOrDefault(v => v.CodeVIN == id)?.CodeVIN)
+            if (id != _context.Voitures.FirstOrDefault(v => v.Id == id)?.Id)
             {
                 return BadRequest();
             }
 
             var voiture = await _context.Voitures
                 .Include(v => v.Finition.Modele.Marque)
-                .FirstOrDefaultAsync(v => v.CodeVIN == id);
+                .FirstOrDefaultAsync(v => v.Id == id);
             if (voiture == null)
             {
                 return NotFound();
@@ -438,11 +440,11 @@ namespace Net_P5.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var voiture = await _context.Voitures
                 .Include(v => v.Finition.Modele.Marque)
-                .FirstOrDefaultAsync(v => v.CodeVIN == id);
+                .FirstOrDefaultAsync(v => v.Id == id);
             if (voiture == null)
             {
                 return NotFound();

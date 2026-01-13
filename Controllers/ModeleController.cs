@@ -52,21 +52,21 @@ namespace Net_P5.Controllers
             }
 
 
-            var modelee = new Modele
+            var modele = new Modele
             {
                 Nom = model.ModeleNom,
                 MarqueId = model.MarqueId
             };
 
-            _context.Modeles.Add(modelee);
+            _context.Modeles.Add(modele);
             await _context.SaveChangesAsync();
 
             // Charger le modèle pour l'affichage TempData
-            var modeleReloaded = await _context.Modeles
+            var modeleCree = await _context.Modeles
                 .Include(m => m.Marque)
-                .FirstOrDefaultAsync(m => m.Id == modelee.Id);
+                .FirstOrDefaultAsync(m => m.Nom == modele.Nom);
 
-            TempData["Message"] = modeleReloaded!.NomComplet;
+            TempData["Message"] = modeleCree!.NomComplet;
 
             return RedirectToAction(nameof(CreateConfirmation));
         }
@@ -151,7 +151,7 @@ namespace Net_P5.Controllers
             // Recharger complètement l'entité avec ses nouvelles propriétés de navigation
             var modeleReloaded = await _context.Modeles
                 .Include(mo => mo.Marque)
-                .FirstOrDefaultAsync(mo => mo.Id == id);
+                .FirstOrDefaultAsync(mo => mo.Id == modele.Id);
 
             TempData["Message"] = modeleReloaded!.NomComplet;
 
