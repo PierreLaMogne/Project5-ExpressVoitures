@@ -11,7 +11,7 @@
     <div class="row mb-5">
         <div class="col-4 offset-4">
             <div class="text-center mb-5">
-                <div class="titre mb-2">Modifier ou supprimer une finition</div>
+                <h1 class="titre mb-2">Modifier ou supprimer une finition</h1>
             </div>
             @if (TempData["ErrorMessage"] != null)
             {
@@ -21,7 +21,7 @@
             }
 
             <div class="mb-3">
-                <label class="form-label">Sélectionner une finition</label>
+                <label for="itemSelect" class="form-label">Sélectionner une finition</label>
                 <div class="d-flex flex-column flex-lg-row">
                     <select id="itemSelect" class="form-select border-dark mb-2 mb-md-0 flex-md-grow-1" required>
                         <option value="" disabled selected>Sélectionner une finition</option>
