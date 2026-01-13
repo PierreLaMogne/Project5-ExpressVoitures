@@ -23,24 +23,24 @@ navbar-brand {
     }
 
 .titre {
-    font-family: Libre Baskerville;
-    font-weight: 400;
-    font-style: Italic;
-    font-size: 2.75rem;
-    line-height: 100%;
-    letter-spacing: 0%;
-    text-align: center;
-    color: rgba(121,97,87,1)
+    font-family: Libre Baskerville !important;
+    font-weight: 400 !important;
+    font-style: Italic !important;
+    font-size: 2.75rem !important;
+    line-height: 100% !important;
+    letter-spacing: 0% !important;
+    text-align: center !important;
+    color: rgba(121,97,87,1) !important;
 }
 
 .soustitre {
-    font-family: Libre Baskerville;
-    font-weight: 400;
-    font-size: 1rem;
-    line-height: 100%;
-    letter-spacing: 0%;
-    text-align: center;
-    color: rgba(44,24,16,1)
+    font-family: Libre Baskerville !important;
+    font-weight: 400 !important;
+    font-size: 1rem !important;
+    line-height: 100% !important;
+    letter-spacing: 0% !important;
+    text-align: center !important;
+    color: rgba(44,24,16,1) !important;
 }
 
 .text-normal {
