@@ -8,9 +8,9 @@
 }
 
 <div class="container">
-    <div class="row mb-5">
-        <div class="col-4 offset-4">
-            <div class="text-center mb-5">
+    <div class="row justify-content-center align-content-center mb-5">
+        <div class="col-4">
+            <div class="mb-5">
                 <h1 class="titre mb-2">Modifier ou supprimer une finition</h1>
             </div>
             @if (TempData["ErrorMessage"] != null)
@@ -20,22 +20,22 @@
                 </div>
             }
 
-            <div class="mb-3">
-                <label for="itemSelect" class="form-label">Sélectionner une finition</label>
-                <div class="d-flex flex-column flex-lg-row">
-                    <select id="itemSelect" class="form-select border-dark mb-2 mb-md-0 flex-md-grow-1" required>
-                        <option value="" disabled selected>Sélectionner une finition</option>
-                        @foreach (var finition in ViewBag.Finitions)
-                        {
-                            <option value="@finition.Id" data-modele-id="@finition.ModeleId">@finition.Modele.Nom @finition.Nom</option>
-                        }
-                    </select>
-                </div>
-                <span class="text-danger" id="validationItem"></span>
+            <div class="mb-3 d-flex flex-column align-items-center">
+                <label for="itemSelect" class="form-label">
+                    Sélectionner une finition
+                        <select id="itemSelect" class="form-select border-dark" required>
+                            <option value="" disabled selected>Sélectionner une finition</option>
+                            @foreach (var finition in ViewBag.Finitions)
+                            {
+                                <option value="@finition.Id" data-modele-id="@finition.ModeleId">@finition.Modele.Nom @finition.Nom</option>
+                            }
+                        </select>
+                    <span class="text-danger" id="validationItem"></span>
+                </label>
             </div>
             <input type="hidden" id="selectedId" value="" />
 
-            <div class="d-flex justify-content-center gap-2 mb-3">
+            <div class="d-flex justify-content-center gap-3 mb-3">
                 <a class="btn btn-modifier" href="#" role="button" data-bs-toggle="modal" data-bs-target="#ConfirmerModification"
                    aria-label="Modifier l'élément sélectionné" style="pointer-events: none; opacity: 0.6;" id="btnModifier">
                     Modifier
