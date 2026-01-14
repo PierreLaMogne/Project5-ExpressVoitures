@@ -64,7 +64,7 @@ namespace Net_P5.Controllers
             // Charger la Finition pour l'affichage TempData
             var finitionCreee = await _context.Finitions
                 .Include(f => f.Modele.Marque)
-                .FirstOrDefaultAsync(f => f.Nom == finition.Nom);
+                .FirstOrDefaultAsync(f => f.Id == finition.Id);
 
             TempData["Message"] = finitionCreee!.NomComplet;
 
