@@ -108,38 +108,36 @@
     </div>
 </div>
 
-
-<!--Script pour récupérer la valeur SelectedId-->
 @section Scripts {
-    <script>
-        $(document).ready(function(){
-            $('#itemSelect').change(function(){
-                var selectedId = $(this).val();
-                if(selectedId){
-                    var selectedOption = $(this).find('option:selected');
-                    var selectedNom = selectedOption.text();
-                    var selectedModeleId = selectedOption.data('modele-id');
+<!--Récupérer la valeur SelectedId-->
+<script>
+    $(document).ready(function(){
+        function toggleButtons(enable) {
+            const style = enable ? {'pointer-events': 'auto', 'opacity': '1'} : {'pointer-events': 'none', 'opacity': '0.6'};
+            $('#btnModifier, #btnSupprimer').css(style);
+        }
 
-                    $('#validationItem').text('');
-                    $('#selectedId').val(selectedId);
-                    $('#btnModifier').css({'pointer-events': 'auto', 'opacity': '1'});
-                    $('#btnSupprimer').css({'pointer-events': 'auto', 'opacity': '1'});
-                    $('#modalModificationId').val(selectedId);
-                    $('#formModification').attr('action', '/Modele/Edit/' + selectedId);
-                    $('#modalSupprId').val(selectedId);
-                    $('#modalModificationNom').val(selectedNom);
-                    $('#modalModificationModeleId').val(selectedModeleId);
-                } else {
-                    $('#validationItem').text('Veuillez sélectionner un modèle.');
-                    $('#selectedId').val('');
-                    $('#btnModifier').css({'pointer-events': 'none', 'opacity': '0.6'});
-                    $('#btnSupprimer').css({'pointer-events': 'none', 'opacity': '0.6'});
-                    $('#modalModificationId').val('');
-                    $('#modalSupprId').val('');
-                    $('#modalModificationNom').val('');
-                    $('#modalModificationModeleId').val('');
-                }
-            });
+        function updateFields(id, nom, modeleId) {
+            $('#selectedId, #modalModificationId, #modalSupprId').val(id);
+            $('#modalModificationNom').val(nom);
+            $('#modalModificationModeleId').val(modeleId);
+            $('#formModification').attr('action', id ? `/Finition/Edit/${id}` : '');
+        }
+
+        $('#itemSelect').change(function(){
+            const selectedId = $(this).val();
+
+            if(selectedId){
+                const selectedOption = $(this).find('option:selected');
+                $('#validationItem').text('');
+                updateFields(selectedId, selectedOption.text(), selectedOption.data('modele-id'));
+                toggleButtons(true);
+            } else {
+                $('#validationItem').text('Veuillez sélectionner un modèle.');
+                updateFields('', '', '');
+                toggleButtons(false);
+            }
         });
-    </script>
+    });
+</script>
 }

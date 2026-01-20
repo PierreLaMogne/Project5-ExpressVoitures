@@ -250,9 +250,8 @@ namespace Net_P5.Controllers
         public async Task PopulateDropdowns()
         {
             ViewBag.Marques = await _context.Marques.OrderBy(m => m.Nom).ToListAsync();
-            ViewBag.Modeles = await _context.Modeles.OrderBy(mo => mo.Nom).ToListAsync();
-            ViewBag.Finitions = await _context.Finitions.OrderBy(f => f.Modele.Nom).ThenBy(f => f.Nom).ToListAsync();
+            ViewBag.Modeles = await _context.Modeles.Include(m => m.Marque).OrderBy(mo => mo.Nom).ToListAsync();
+            ViewBag.Finitions = await _context.Finitions.Include(mo => mo.Modele).OrderBy(f => f.Modele.Nom).ThenBy(f => f.Nom).ToListAsync();
         }
-
     }
 }

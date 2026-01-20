@@ -95,30 +95,26 @@
     </div>
 </div>
 
-<!--Script pour récupérer la valeur SelectedId-->
 @section Scripts {
     <script>
         $(document).ready(function(){
             $('#itemSelect').change(function(){
-                var selectedId = $(this).val();
-                var selectedNom = $(this).find('option:selected').data('nom');
-                if(selectedId){
-                    $('#validationItem').text('');
-                    $('#selectedId').val(selectedId);
-                    $('#btnModifier').css({'pointer-events': 'auto', 'opacity': '1'});
-                    $('#btnSupprimer').css({'pointer-events': 'auto', 'opacity': '1'});
-                    $('#modalModificationId').val(selectedId);
+                const selectedId = $(this).val();
+                const selectedNom = $(this).find('option:selected').data('nom');
+                const isSelected = !!selectedId;
+                
+                // Mise à jour des champs
+                $('#validationItem').text(isSelected ? '' : 'Veuillez sélectionner une marque.');
+                $('#selectedId, #modalModificationId, #modalSupprId').val(selectedId);
+                $('input[name="MarqueNom"]').val(selectedNom || '');
+                
+                // Activation/désactivation des boutons
+                const btnStyle = isSelected ? {'pointer-events': 'auto', 'opacity': '1'} : {'pointer-events': 'none', 'opacity': '0.6'};
+                $('#btnModifier, #btnSupprimer').css(btnStyle);
+                
+                // Mise à jour de l'action du formulaire
+                if(isSelected) {
                     $('#formModification').attr('action', '/Marque/Edit/' + selectedId);
-                    $('#modalSupprId').val(selectedId);
-                    $('input[name="MarqueNom"]').val(selectedNom);  // ✓ Préremplir le champ
-                } else {
-                    $('#validationItem').text('Veuillez sélectionner une marque.');
-                    $('#selectedId').val('');
-                    $('#btnModifier').css({'pointer-events': 'none', 'opacity': '0.6'});
-                    $('#btnSupprimer').css({'pointer-events': 'none', 'opacity': '0.6'});
-                    $('#modalModificationId').val('');
-                    $('#modalSupprId').val('');
-                    $('input[name="MarqueNom"]').val('');  // ✓ Réinitialiser
                 }
             });
         });
